@@ -1,0 +1,19 @@
+{% extends "portal/base_portal.html" %}
+{% block title %}تسجيل الدخول — بوابة العميل{% endblock %}
+{% block content %}
+<form method="post">
+  {% csrf_token %}
+  <div class="form-group">
+    <label>اسم المستخدم (بيانات دخول الواي فاي)</label>
+    <input class="field" type="text" name="username" required autofocus>
+  </div>
+  <div class="form-group">
+    <label>كلمة المرور</label>
+    <input class="field" type="password" name="password" required>
+  </div>
+  <button type="submit" class="btn btn-primary btn-block">دخول</button>
+</form>
+<p style="text-align:center;color:var(--text-muted);font-size:12.5px;margin-top:18px;">
+  استخدم نفس بيانات دخولك على شبكة الواي فاي.
+</p>
+{% endblock %}
