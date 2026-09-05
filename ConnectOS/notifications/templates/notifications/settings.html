@@ -1,0 +1,60 @@
+{% extends "base.html" %}
+{% block title %}التنبيهات — ConnectOS{% endblock %}
+{% block page_title %}تنبيهات تيليجرام{% endblock %}
+{% block page_crumb %}استقبل تنبيهات فورية عن الديون، انتهاء الاشتراكات، والأحداث المهمة{% endblock %}
+
+{% block content %}
+<div class="panel" style="max-width:620px;">
+  {% if not settings.is_configured %}
+  <div style="background:rgba(231,168,61,0.1);border:1px solid rgba(231,168,61,0.35);color:var(--gold-light);padding:14px 18px;border-radius:10px;margin-bottom:20px;font-size:13.5px;">
+    ⚠️ التنبيهات مش شغالة لسه. اعمل بوت من <span class="mono">@BotFather</span> على تيليجرام،
+    وهاته الـ Chat ID بتاعك من <span class="mono">@userinfobot</span>، واحفظهم تحت.
+  </div>
+  {% endif %}
+  <form method="post">
+    {% csrf_token %}
+    <div class="form-group">
+      <label>Bot Token</label>
+      <input class="field mono" type="text" name="telegram_bot_token" value="{{ settings.telegram_bot_token }}" placeholder="123456:ABC-DEF...">
+    </div>
+    <div class="form-group">
+      <label>Chat ID</label>
+      <input class="field mono" type="text" name="telegram_chat_id" value="{{ settings.telegram_chat_id }}" placeholder="123456789">
+    </div>
+    <div class="form-group">
+      <label><input type="checkbox" name="notify_low_balance" {% if settings.notify_low_balance %}checked{% endif %}> تنبيه عند اقتراب حد المديونية</label>
+    </div>
+    <div class="form-group">
+      <label><input type="checkbox" name="notify_new_debt" {% if settings.notify_new_debt %}checked{% endif %}> تنبيه عند تسجيل دين جديد على موزّع</label>
+    </div>
+    <div class="form-group">
+      <label><input type="checkbox" name="notify_subscriber_expiry" {% if settings.notify_subscriber_expiry %}checked{% endif %}> تنبيه قبل انتهاء اشتراك مشترك بيوم</label>
+    </div>
+    <button type="submit" class="btn btn-primary btn-block">حفظ الإعدادات</button>
+  </form>
+</div>
+
+<div class="panel" style="max-width:620px;">
+  <div class="panel-head">
+    <h3>اختبار الإرسال</h3>
+    <form method="post" action="{% url 'notifications:send_test' %}">
+      {% csrf_token %}
+      <button type="submit" class="btn btn-ghost btn-sm">إرسال رسالة تجربة</button>
+    </form>
+  </div>
+  <table>
+    <thead><tr><th>الرسالة</th><th>الحالة</th><th>الوقت</th></tr></thead>
+    <tbody>
+      {% for log in logs %}
+      <tr>
+        <td>{{ log.message|truncatechars:60 }}</td>
+        <td>{% if log.success %}<span class="badge badge-green">تم الإرسال</span>{% else %}<span class="badge badge-red">فشل</span>{% endif %}</td>
+        <td>{{ log.created_at|date:"Y-m-d H:i" }}</td>
+      </tr>
+      {% empty %}
+      <tr><td colspan="3"><div class="empty">لسه مفيش رسائل مُرسلة.</div></td></tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endblock %}
