@@ -1,0 +1,8 @@
+# ثبّت الاتنين مع بعض في السيرفر الفعلي:
+#   pip install -r requirements.txt -r requirements-prod.txt
+# ملاحظة: whitenoise بقى في requirements.txt الأساسي لأن settings.py
+# بيحمّله دايمًا كميدل وير (مش بس في الإنتاج)، فمحتاج يكون متاح في أي بيئة.
+-r requirements.txt
+
+gunicorn>=22.0
+psycopg2-binary>=2.9
