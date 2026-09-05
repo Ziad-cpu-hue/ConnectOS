@@ -1,0 +1,80 @@
+{% extends "base.html" %}
+{% block title %}عملاء المنصة — ConnectOS{% endblock %}
+{% block page_title %}عملاء المنصة{% endblock %}
+{% block page_crumb %}كل الشركات المشتركة في ConnectOS وبياناتها{% endblock %}
+
+{% block content %}
+<div class="kpi-grid">
+  <div class="kpi">
+    <div class="k-lbl">إجمالي الشركات المشتركة</div>
+    <div class="k-val teal">{{ companies|length }}</div>
+  </div>
+  <div class="kpi">
+    <div class="k-lbl">إجمالي إيرادات المنصة</div>
+    <div class="k-val gold">{{ total_revenue }} ج</div>
+  </div>
+  <div class="kpi">
+    <div class="k-lbl">فواتير بانتظار تأكيد الدفع</div>
+    <div class="k-val danger">{{ pending_payments|length }}</div>
+  </div>
+</div>
+
+{% if pending_payments %}
+<div class="panel">
+  <div class="panel-head"><h3>فواتير بانتظار التأكيد (دفع محفظة إلكترونية)</h3></div>
+  <table>
+    <thead>
+      <tr><th>الشركة</th><th>الباقة</th><th>المبلغ</th><th>تاريخ الإنشاء</th><th></th></tr>
+    </thead>
+    <tbody>
+      {% for payment in pending_payments %}
+      <tr>
+        <td>{{ payment.company.name }}</td>
+        <td>{{ payment.company.platform_plan.name|default:"—" }}</td>
+        <td class="mono">{{ payment.amount }} ج</td>
+        <td>{{ payment.paid_at|date:"Y-m-d H:i" }}</td>
+        <td>
+          <form method="post" action="{% url 'dashboard:confirm_payment' payment.id %}">
+            {% csrf_token %}
+            <button type="submit" class="btn btn-sm btn-primary">تأكيد استلام الدفع</button>
+          </form>
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endif %}
+
+<div class="panel">
+  <div class="panel-head"><h3>الشركات</h3></div>
+  <table>
+    <thead>
+      <tr>
+        <th>اسم الشركة</th><th>خطة الاشتراك</th><th>عدد المستخدمين</th><th>إجمالي المدفوع</th><th>تاريخ الانضمام</th><th>الحالة</th><th></th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for company in companies %}
+      <tr>
+        <td>{{ company.name }}</td>
+        <td>
+          <span class="badge badge-gold">{{ company.platform_plan.name|default:company.get_subscription_plan_display }}</span>
+          {% if company.unlimited_usage %}<span class="badge badge-green">بدون حدود</span>{% endif %}
+        </td>
+        <td>{{ company.users.count }}</td>
+        <td class="mono">{{ company.payments.all|length }} دفعة</td>
+        <td>{{ company.created_at|date:"Y-m-d" }}</td>
+        <td>
+          {% if company.is_active %}<span class="badge badge-green">نشط</span>
+          {% else %}<span class="badge badge-red">موقوف</span>{% endif %}
+        </td>
+        <td><a href="{% url 'dashboard:company_limits' company.id %}" class="btn btn-sm btn-ghost">ضبط الحدود</a></td>
+      </tr>
+      {% empty %}
+      <tr><td colspan="7" class="empty">لا يوجد عملاء بعد.</td></tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endblock %}
