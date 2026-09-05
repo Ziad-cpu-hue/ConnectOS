@@ -1,0 +1,68 @@
+{% extends "base.html" %}
+{% block title %}المشتركون — ConnectOS{% endblock %}
+{% block page_title %}المشتركون{% endblock %}
+{% block page_crumb %}حسابات دخول دائمة على الهوت سبوت — متزامنة تلقائيًا مع RADIUS{% endblock %}
+{% block page_action %}<a href="{% url 'subscribers:group_list' %}" class="btn btn-ghost">👥 المجموعات</a> <a href="{% url 'subscribers:create' %}" class="btn btn-primary">+ إضافة مشترك</a>{% endblock %}
+
+{% block content %}
+<div class="panel">
+  <form method="get" style="margin-bottom:16px;display:flex;gap:10px;flex-wrap:wrap;">
+    <input class="field" style="max-width:240px;" type="text" name="q" value="{{ q }}" placeholder="بحث بالاسم أو اليوزر...">
+    <select class="field" style="max-width:180px;" name="plan" onchange="this.form.submit()">
+      <option value="">كل الباقات</option>
+      {% for p in plans %}<option value="{{ p.id }}" {% if plan_id == p.id|stringformat:"s" %}selected{% endif %}>{{ p.name }}</option>{% endfor %}
+    </select>
+    <select class="field" style="max-width:180px;" name="group" onchange="this.form.submit()">
+      <option value="">كل المجموعات</option>
+      {% for g in groups %}<option value="{{ g.id }}" {% if group_id == g.id|stringformat:"s" %}selected{% endif %}>{{ g.name }}</option>{% endfor %}
+    </select>
+    <select class="field" style="max-width:160px;" name="status" onchange="this.form.submit()">
+      <option value="">كل الحالات</option>
+      <option value="active" {% if status == "active" %}selected{% endif %}>نشط</option>
+      <option value="suspended" {% if status == "suspended" %}selected{% endif %}>موقوف</option>
+    </select>
+    <button type="submit" class="btn btn-ghost btn-sm">بحث</button>
+  </form>
+  <table>
+    <thead>
+      <tr><th>الاسم</th><th>اليوزر</th><th>الباقة</th><th>المجموعة</th><th>ينتهي في</th><th>الحالة</th><th></th></tr>
+    </thead>
+    <tbody>
+      {% for sub in subscribers %}
+      <tr>
+        <td>{{ sub.full_name }}{% if sub.phone %}<div style="color:var(--text-muted);font-size:12px;">{{ sub.phone }}</div>{% endif %}</td>
+        <td class="mono">{{ sub.username }}</td>
+        <td>{{ sub.plan.name }}</td>
+        <td>{{ sub.group.name|default:"—" }}</td>
+        <td>{{ sub.expires_at|date:"Y-m-d H:i"|default:"—" }}</td>
+        <td>
+          {% if sub.effective_status == "active" %}<span class="badge badge-green">نشط</span>
+          {% elif sub.effective_status == "expired" %}<span class="badge badge-gold">منتهي</span>
+          {% else %}<span class="badge badge-red">موقوف</span>{% endif %}
+        </td>
+        <td style="display:flex;gap:6px;flex-wrap:wrap;">
+          <a href="{% url 'subscribers:edit' sub.pk %}" class="btn btn-ghost btn-sm">تعديل</a>
+          <form method="post" action="{% url 'subscribers:renew' sub.pk %}" style="display:inline;">
+            {% csrf_token %}<button type="submit" class="btn btn-ghost btn-sm">تجديد</button>
+          </form>
+          <form method="post" action="{% url 'subscribers:toggle_suspend' sub.pk %}" style="display:inline;">
+            {% csrf_token %}
+            <button type="submit" class="btn btn-ghost btn-sm">{% if sub.status == "suspended" %}تفعيل{% else %}إيقاف{% endif %}</button>
+          </form>
+          <form method="post" action="{% url 'subscribers:delete' sub.pk %}" style="display:inline;" onsubmit="return confirm('تأكيد حذف المشترك؟');">
+            {% csrf_token %}<button type="submit" class="btn btn-danger btn-sm">حذف</button>
+          </form>
+        </td>
+      </tr>
+      {% empty %}
+      <tr><td colspan="7">
+        <div class="empty">
+          <div class="e-icon">👤</div>
+          مفيش مشتركين مطابقين. أضف أول مشترك وهيبقى شغال على RADIUS فورًا.
+        </div>
+      </td></tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endblock %}

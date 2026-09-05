@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+{% block page_title %}قالب كارت جديد{% endblock %}
+{% block page_crumb %}اختر الألوان والشعار الظاهرين على الكارت المطبوع{% endblock %}
+{% block content %}
+<div class="panel" style="max-width:560px;">
+  <form method="post" enctype="multipart/form-data">
+    {% csrf_token %}
+    {% for field in form %}
+    <div class="form-group">
+      <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+      {{ field }}
+      {% if field.errors %}<ul class="errorlist">{% for e in field.errors %}<li>{{ e }}</li>{% endfor %}</ul>{% endif %}
+    </div>
+    {% endfor %}
+    <div style="display:flex;gap:10px;margin-top:10px;">
+      <button type="submit" class="btn btn-primary">حفظ القالب</button>
+      <a href="{% url 'vouchers:template_list' %}" class="btn btn-ghost">إلغاء</a>
+    </div>
+  </form>
+</div>
+{% endblock %}

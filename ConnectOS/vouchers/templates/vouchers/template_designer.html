@@ -1,0 +1,94 @@
+{% extends "base.html" %}
+{% block title %}مصمم الكارت — ConnectOS{% endblock %}
+{% block page_title %}مصمم كارت "{{ tpl.name }}"{% endblock %}
+{% block page_crumb %}اسحب أي عنصر لمكانه، ثم اضغط حفظ التصميم{% endblock %}
+{% block page_action %}<a href="{% url 'vouchers:template_list' %}" class="btn btn-ghost btn-sm">رجوع للقوالب</a>{% endblock %}
+
+{% block content %}
+<div class="panel">
+  <div class="panel-head">
+    <h3>معاينة الكارت (اسحب العناصر)</h3>
+    <button id="save-btn" class="btn btn-primary btn-sm">💾 حفظ التصميم</button>
+  </div>
+
+  <div id="canvas" style="
+      position:relative; width:340px; height:190px; border-radius:14px;
+      overflow:hidden; border:1px dashed rgba(255,255,255,0.25);
+      {% if tpl.background_image %}background:url('{{ tpl.background_image.url }}') center/cover;{% else %}
+      background:linear-gradient(160deg, {{ tpl.primary_color }}22, {{ tpl.secondary_color }}22), #F3EEDF;
+      {% endif %}
+    ">
+
+    <div class="drag-el" data-key="logo" style="position:absolute; left:{{ layout.logo.x }}px; top:{{ layout.logo.y }}px; font-weight:800; font-size:{{ layout.logo.font_size }}px; color:{{ layout.logo.color }}; cursor:move; user-select:none; padding:4px 8px; border:1px dashed rgba(0,0,0,0.15); border-radius:6px;">
+      {{ tpl.logo_text }}
+    </div>
+
+    <div class="drag-el" data-key="price" style="position:absolute; left:{{ layout.price.x }}px; top:{{ layout.price.y }}px; font-weight:700; font-size:{{ layout.price.font_size }}px; color:{{ layout.price.color }}; cursor:move; user-select:none; padding:4px 8px; border:1px dashed rgba(0,0,0,0.15); border-radius:6px;">
+      50 ج
+    </div>
+
+    <div class="drag-el" data-key="code" style="position:absolute; left:{{ layout.code.x }}px; top:{{ layout.code.y }}px; font-family:'JetBrains Mono',monospace; font-weight:700; font-size:{{ layout.code.font_size }}px; color:{{ layout.code.color }}; cursor:move; user-select:none; background:#fff; padding:6px 12px; border-radius:6px; letter-spacing:2px; border:1.5px dashed #d8cfb8;">
+      1234567890
+    </div>
+
+    {% if tpl.show_qr %}
+    <div class="drag-el" data-key="qr" style="position:absolute; left:{{ layout.qr.x }}px; top:{{ layout.qr.y }}px; width:{{ layout.qr.size }}px; height:{{ layout.qr.size }}px; cursor:move; user-select:none; background:repeating-linear-gradient(45deg,#333,#333 3px,#fff 3px,#fff 6px); border-radius:6px; display:flex; align-items:center; justify-content:center; color:#fff; font-size:10px; border:1px dashed rgba(0,0,0,0.3);">
+      QR
+    </div>
+    {% endif %}
+  </div>
+  <p style="color:var(--text-muted); font-size:12.5px; margin-top:14px;">
+    💡 دي معاينة تصميم فقط — الكود والسعر أرقام تجريبية، هيتحطوا فعليًا وقت الطباعة الحقيقية لكل كارت.
+  </p>
+</div>
+
+<script>
+const canvas = document.getElementById('canvas');
+const layout = {{ layout|safe|default:"{}" }};
+let dragEl = null, offsetX = 0, offsetY = 0;
+
+document.querySelectorAll('.drag-el').forEach(el => {
+  el.addEventListener('mousedown', (e) => {
+    dragEl = el;
+    const rect = el.getBoundingClientRect();
+    offsetX = e.clientX - rect.left;
+    offsetY = e.clientY - rect.top;
+    e.preventDefault();
+  });
+});
+
+document.addEventListener('mousemove', (e) => {
+  if (!dragEl) return;
+  const canvasRect = canvas.getBoundingClientRect();
+  let x = e.clientX - canvasRect.left - offsetX;
+  let y = e.clientY - canvasRect.top - offsetY;
+  x = Math.max(0, Math.min(x, canvas.clientWidth - 20));
+  y = Math.max(0, Math.min(y, canvas.clientHeight - 20));
+  dragEl.style.left = x + 'px';
+  dragEl.style.top = y + 'px';
+});
+
+document.addEventListener('mouseup', () => { dragEl = null; });
+
+document.getElementById('save-btn').addEventListener('click', async () => {
+  const result = {};
+  document.querySelectorAll('.drag-el').forEach(el => {
+    const key = el.dataset.key;
+    result[key] = {
+      ...(layout[key] || {}),
+      x: parseInt(el.style.left),
+      y: parseInt(el.style.top),
+    };
+  });
+  const resp = await fetch("{% url 'vouchers:template_designer_save' tpl.pk %}", {
+    method: 'POST',
+    headers: {'Content-Type': 'application/json', 'X-CSRFToken': '{{ csrf_token }}'},
+    body: JSON.stringify(result),
+  });
+  const data = await resp.json();
+  const btn = document.getElementById('save-btn');
+  btn.textContent = data.ok ? '✅ تم الحفظ' : '❌ فشل الحفظ';
+  setTimeout(() => btn.textContent = '💾 حفظ التصميم', 1800);
+});
+</script>
+{% endblock %}

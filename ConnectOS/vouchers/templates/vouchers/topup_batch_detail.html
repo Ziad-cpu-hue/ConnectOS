@@ -1,0 +1,24 @@
+{% extends "base.html" %}
+{% block page_title %}دفعة شحن #{{ batch.id }}{% endblock %}
+{% block page_crumb %}{{ batch.amount }} ج لكل كارت — {{ batch.quantity }} كارت{% endblock %}
+{% block content %}
+<div class="panel">
+  <table>
+    <thead><tr><th>الكود</th><th>القيمة</th><th>الحالة</th><th>استخدمه</th><th>تاريخ الاستخدام</th></tr></thead>
+    <tbody>
+      {% for c in cards %}
+      <tr>
+        <td class="mono card-code">{{ c.code }}</td>
+        <td class="mono">{{ c.amount }} ج</td>
+        <td>
+          {% if c.status == 'used' %}<span class="badge badge-green">مستخدم</span>
+          {% else %}<span class="badge badge-gray">غير مستخدم</span>{% endif %}
+        </td>
+        <td>{{ c.used_by.full_name|default:"—" }}</td>
+        <td>{{ c.used_at|date:"Y-m-d H:i"|default:"—" }}</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endblock %}
