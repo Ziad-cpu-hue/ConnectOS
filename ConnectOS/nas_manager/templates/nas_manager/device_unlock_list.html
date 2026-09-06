@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+{% block title %}فتح الأجهزة — ConnectOS{% endblock %}
+{% block page_title %}فتح الأجهزة{% endblock %}
+{% block page_crumb %}الوصول لأي جهاز ميكروتيك حتى لو خلف NAT بدون IP عام{% endblock %}
+
+{% block content %}
+<div class="panel" style="border-color:rgba(232,153,26,0.4);margin-bottom:20px;">
+  <p style="color:var(--text-muted);font-size:13px;line-height:1.9;margin:0;">
+    ⚠️ بيانات النفق هنا حقيقية ومتولدة لكل جهاز، لكن الوصول الفعلي محتاج سيرفر VPN
+    شغال فعليًا على المنصة (SoftEther/OpenVPN) يستقبل الاتصال. راجع
+    <code>VPN_SETUP.md</code> في المشروع لخطوات تجهيزه.
+  </p>
+</div>
+<div class="panel">
+  <div class="table-responsive">
+  <table>
+    <thead><tr><th>اسم الجهاز</th><th>رابط الوصول المباشر</th><th>حالة النفق</th><th></th></tr></thead>
+    <tbody>
+      {% for nas in servers %}
+      <tr>
+        <td>{{ nas.name }}</td>
+        <td class="mono" style="direction:ltr;text-align:right;">{{ nas.vpn_direct_link|default:"—" }}</td>
+        <td>
+          {% if nas.vpn_connected %}<span class="badge badge-green">متصل</span>
+          {% else %}<span class="badge badge-red">غير متصل</span>{% endif %}
+        </td>
+        <td><a href="{% url 'nas_manager:device_unlock' nas.pk %}" class="btn btn-ghost btn-sm">فتح الجهاز</a></td>
+      </tr>
+      {% empty %}
+      <tr><td colspan="4"><div class="empty"><div class="e-icon">🔓</div>مفيش أجهزة مضافة لسه.</div></td></tr>
+      {% endfor %}
+    </tbody>
+  </table>
+  </div>
+</div>
+{% endblock %}
