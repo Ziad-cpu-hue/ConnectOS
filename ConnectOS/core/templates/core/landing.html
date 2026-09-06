@@ -182,7 +182,7 @@
 
 		<!-- CATEGORY FILTER -->
 		<div class="cat-filter reveal" style="transition-delay:.15s">
-			<button class="cat-btn active" data-filter="all">
+			<button class="cat-btn" data-filter="all">
 				<svg viewBox="0 0 24 24">
 					<path d="M4 6h16M4 12h16M4 18h16" />
 				</svg>
@@ -203,7 +203,7 @@
 				</svg>
 				التحليلات
 			</button>
-			<button class="cat-btn" data-filter="side">
+			<button class="cat-btn active" data-filter="side">
 				<svg viewBox="0 0 24 24">
 					<path d="M12 2l1.8 5.6H20l-4.6 3.4L17 17l-5-3.6L7 17l1.6-6L4 7.6h6.2L12 2z" />
 				</svg>
@@ -662,7 +662,7 @@
 					<path d="M4 21c0-4.4 3.6-8 8-8s8 3.6 8 8" />
 				</svg>
 			</div>
-			<div class="contact-name">الأستاذ زياد أحمد</div>
+			<div class="contact-name">م. زياد أحمد</div>
 			<div class="contact-role">للتواصل والاستفسارات</div>
 			<div class="contact-actions">
 				<a href="tel:+201556060683" class="contact-btn call">
@@ -704,7 +704,7 @@
 						<svg viewBox="0 0 24 24">
 							<path d="M22 16.92v3a2 2 0 01-2.18 2A19.8 19.8 0 013.08 4.18 2 2 0 015.07 2h3a2 2 0 012 1.72c.127.96.361 1.903.7 2.81a2 2 0 01-.45 2.11L9.09 9.91a16 16 0 006.99 7l1.27-1.27a2 2 0 012.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0122 16.92z" />
 						</svg>
-						+20 155 606 0683
+						01556060683
 					</li>
 					<li>
 						<svg viewBox="0 0 24 24">
@@ -737,5 +737,11 @@
 </footer>
 
 <script src="{% static 'js/landing-shack-ar.js' %}"></script>
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+	var defaultTab = document.querySelector('.cat-btn[data-filter="side"]');
+	if (defaultTab) { defaultTab.click(); }
+});
+</script>
 </body>
 </html>
