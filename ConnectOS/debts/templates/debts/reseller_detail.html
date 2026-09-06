@@ -8,7 +8,7 @@
 {% endblock %}
 
 {% block content %}
-<div class="kpi-grid" style="grid-template-columns:repeat(3,1fr);">
+<div class="kpi-grid-3">
   <div class="kpi">
     <div class="k-lbl">الدين الحالي</div>
     <div class="k-val {% if reseller.is_over_limit %}danger{% elif reseller.current_debt > 0 %}gold{% else %}teal{% endif %}">{{ reseller.current_debt }} ج</div>
@@ -31,6 +31,7 @@
 
 <div class="panel">
   <div class="panel-head"><h3>سجل الحركات</h3></div>
+  <div class="table-responsive">
   <table>
     <thead><tr><th>النوع</th><th>المبلغ</th><th>التفاصيل</th><th>التاريخ</th><th>سُجّلت بواسطة</th></tr></thead>
     <tbody>
@@ -55,5 +56,6 @@
       {% endfor %}
     </tbody>
   </table>
+  </div>
 </div>
 {% endblock %}

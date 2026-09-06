@@ -5,7 +5,7 @@
 {% block page_action %}<a href="{% url 'debts:reseller_create' %}" class="btn btn-primary">+ إضافة موزع</a>{% endblock %}
 
 {% block content %}
-<div class="kpi-grid" style="grid-template-columns:repeat(3,1fr);">
+<div class="kpi-grid-3">
   <div class="kpi">
     <div class="k-lbl">إجمالي عدد الموزعين</div>
     <div class="k-val">{{ resellers|length }}</div>
@@ -21,6 +21,7 @@
 </div>
 
 <div class="panel">
+  <div class="table-responsive">
   <table>
     <thead>
       <tr><th>اسم الموزع</th><th>المنطقة</th><th>الدين الحالي</th><th>الحد الأقصى</th><th></th></tr>
@@ -46,5 +47,6 @@
       {% endfor %}
     </tbody>
   </table>
+  </div>
 </div>
 {% endblock %}
