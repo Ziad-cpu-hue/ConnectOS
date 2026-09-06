@@ -156,9 +156,38 @@ select.field option{background:#fff;color:var(--text);}
   display:flex;align-items:center;justify-content:space-between;margin-bottom:22px;
   background:#fff;border-radius:20px;padding:18px 24px;
   box-shadow:0 8px 22px -16px rgba(42,38,77,.25);
+  flex-wrap:wrap;gap:12px;
 }
 .topbar h1{font-size:23px;font-weight:800;color:var(--text);}
 .topbar .crumb{color:var(--text-muted);font-size:13px;margin-top:4px;}
+.topbar-title{display:flex;align-items:center;gap:12px;min-width:0;}
+.topbar-title > div{min-width:0;}
+.topbar-actions{display:flex;flex-wrap:wrap;gap:10px;}
+
+/* ===== زرار القائمة للموبايل (همبرجر) — مخفي على الشاشات الكبيرة ===== */
+.mobile-menu-btn{
+  display:none;align-items:center;justify-content:center;
+  width:40px;height:40px;border-radius:12px;flex-shrink:0;
+  background:var(--panel-2);border:1px solid var(--border);color:var(--text);
+  cursor:pointer;
+}
+.mobile-menu-btn .material-symbols-outlined{font-size:22px;}
+
+/* ===== طبقة تعتيم خلف القائمة الجانبية على الموبايل ===== */
+.sidebar-backdrop{
+  position:fixed;inset:0;background:rgba(20,16,40,0.45);z-index:998;
+  opacity:0;visibility:hidden;transition:opacity .25s ease, visibility 0s linear .25s;
+}
+.sidebar-backdrop.open{opacity:1;visibility:visible;transition:opacity .25s ease;}
+
+/* ===== جدول قابل للتمرير أفقيًا بدل ما أعمدته تتلخبط أو تتقصف على الشاشات الصغيرة ===== */
+.table-responsive{width:100%;overflow-x:auto;-webkit-overflow-scrolling:touch;}
+.table-responsive table{min-width:560px;}
+
+/* ===== نسخة من كروت KPI بثلاث أعمدة (تُستخدم بدل تحديد grid-template-columns
+   يدوي في الصفحة نفسها) — عشان تفضل قابلة للتجاوب من غير ما نكرر قاعدة CSS ثابتة
+   جوه الصفحة تكسر مع الشاشات الصغيرة ===== */
+.kpi-grid-3{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-bottom:28px;}
 
 .messages{list-style:none;margin-bottom:20px;}
 .messages li{
@@ -286,8 +315,47 @@ tr:hover td{background:var(--panel-2);}
 
 @media (max-width:900px){
   .page-wrap{padding:10px;}
-  .shell{grid-template-columns:1fr;border-radius:22px;}
-  .sidebar{display:none;}
-  .kpi-grid{grid-template-columns:1fr 1fr;}
+  .shell{grid-template-columns:1fr;border-radius:22px;gap:0;}
+  .kpi-grid,.kpi-grid-3{grid-template-columns:1fr 1fr;}
   .print-grid{grid-template-columns:1fr;}
+
+  /* القائمة الجانبية بتبقى "درج" عائم بيتفتح فوق المحتوى بدل ما تختفي
+     خالص وتسيب المستخدم من غير أي وسيلة للتنقل بين الشاشات */
+  .mobile-menu-btn{display:inline-flex;}
+  .sidebar{
+    position:fixed;top:0;bottom:0;right:0;
+    width:270px;max-width:82vw;height:100vh;
+    border-radius:0;z-index:999;
+    transform:translateX(100%);
+    transition:transform .3s ease;
+    box-shadow:-16px 0 40px -12px rgba(20,16,40,.4);
+  }
+  .sidebar.open{transform:translateX(0);}
+  .main{padding:0;}
 }
+
+@media (max-width:640px){
+  .topbar{padding:14px 16px;border-radius:18px;}
+  .topbar h1{font-size:19px;}
+  .panel{padding:18px;border-radius:18px;}
+  .kpi{padding:16px;}
+  .kpi .k-val{font-size:21px;}
+  .auth-card{padding:30px 22px;border-radius:22px;}
+  .app-modal{padding:26px 20px 22px;}
+}
+
+@media (max-width:480px){
+  .kpi-grid,.kpi-grid-3{grid-template-columns:1fr;}
+  .topbar{flex-direction:column;align-items:stretch;}
+  .topbar-actions{width:100%;}
+  .topbar-actions .btn{flex:1;justify-content:center;}
+  .panel{padding:14px;}
+  .panel-head{flex-wrap:wrap;gap:10px;}
+  .auth-wrap{padding:14px;}
+  .auth-card{padding:26px 18px;}
+}
+
+/* حيلة CSS عشان صفوف الأزرار المكتوبة inline (display:flex) جوه خلايا
+   الجداول تلف على أكتر من سطر بدل ما تتلخبط أو تخرج بره الجدول على الموبايل،
+   من غير ما نحتاج نلمس كل قالب لوحده */
+td[style*="display:flex"],td[style*="display: flex"]{flex-wrap:wrap;}
