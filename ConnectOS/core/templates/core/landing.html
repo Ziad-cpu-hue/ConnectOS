@@ -582,7 +582,7 @@
 						</div>
 						<span class="card-price">{{ plan.price_monthly|floatformat:0 }}<small> ج/شهر</small></span>
 					</div>
-					<p class="card-desc">تناسب شبكات حتى {{ plan.max_clients }} مشترك، بعدد {{ plan.max_servers }} سيرفر ميكروتك، و{{ plan.max_print_cards }} كارت طباعة شهريًا — بأقل سعر وأعلى سقف استخدام في السوق.</p>
+					<p class="card-desc">تناسب شبكات حتى <span class="stat-highlight stat-highlight-clients">{{ plan.max_clients }} مشترك</span>، بعدد <span class="stat-highlight stat-highlight-servers">{{ plan.max_servers }} سيرفر ميكروتك</span>، و<span class="stat-highlight stat-highlight-cards">{{ plan.max_print_cards }} كارت طباعة شهريًا</span> — بأقل سعر وأعلى سقف استخدام في السوق.</p>
 					<div class="plan-stats">
 						<div class="plan-stat">
 							<span class="plan-stat-val">{{ plan.max_clients }}</span>
