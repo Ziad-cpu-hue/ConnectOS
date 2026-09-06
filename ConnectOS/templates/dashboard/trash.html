@@ -6,6 +6,7 @@
 {% for section in sections %}
 <div class="panel" style="margin-bottom:20px;">
   <div class="panel-head"><h3>{{ section.label }} <span class="badge badge-gray">{{ section.items|length }}</span></h3></div>
+  <div class="table-responsive">
   <table>
     <thead><tr><th></th><th>تاريخ النقل لسلة المهملات</th><th></th></tr></thead>
     <tbody>
@@ -29,6 +30,7 @@
       {% endfor %}
     </tbody>
   </table>
+  </div>
 </div>
 {% endfor %}
 {% endblock %}

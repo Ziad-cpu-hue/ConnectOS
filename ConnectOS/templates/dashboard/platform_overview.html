@@ -22,6 +22,7 @@
 {% if pending_payments %}
 <div class="panel">
   <div class="panel-head"><h3>فواتير بانتظار التأكيد (دفع محفظة إلكترونية)</h3></div>
+  <div class="table-responsive">
   <table>
     <thead>
       <tr><th>الشركة</th><th>الباقة</th><th>المبلغ</th><th>تاريخ الإنشاء</th><th></th></tr>
@@ -43,11 +44,13 @@
       {% endfor %}
     </tbody>
   </table>
+  </div>
 </div>
 {% endif %}
 
 <div class="panel">
   <div class="panel-head"><h3>الشركات</h3></div>
+  <div class="table-responsive">
   <table>
     <thead>
       <tr>
@@ -76,5 +79,6 @@
       {% endfor %}
     </tbody>
   </table>
+  </div>
 </div>
 {% endblock %}
