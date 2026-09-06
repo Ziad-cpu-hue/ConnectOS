@@ -9,6 +9,7 @@
     <h3>{{ sessions|length }} جلسة نشطة الآن</h3>
     <a href="{% url 'radius_core:online_now' %}" class="btn btn-ghost btn-sm">↻ تحديث</a>
   </div>
+  <div class="table-responsive">
   <table>
     <thead>
       <tr><th>المشترك</th><th>الجهاز (NAS)</th><th>IP</th><th>MAC</th><th>بدأت الساعة</th><th>الاستهلاك</th></tr>
@@ -35,5 +36,6 @@
       {% endfor %}
     </tbody>
   </table>
+  </div>
 </div>
 {% endblock %}
