@@ -786,6 +786,35 @@ nav.scrolled {
 	margin-bottom: 16px;
 }
 
+/* أرقام الباقة المهمة (المشتركين / السيرفرات / كروت الطباعة) — بارزة
+   بلون وحدود وخط مختلف عشان تلفت نظر العميل فورًا */
+.stat-highlight {
+	display: inline-flex;
+	align-items: center;
+	font-family: "El Messiri", serif;
+	font-weight: 700;
+	font-size: 12.5px;
+	padding: 2px 10px;
+	border-radius: 100px;
+	white-space: nowrap;
+	line-height: 1.6;
+}
+.stat-highlight-clients {
+	background: var(--teal-l);
+	color: var(--teal-d);
+	border: 1.5px solid rgba(29, 158, 117, 0.3);
+}
+.stat-highlight-servers {
+	background: #fff0ea;
+	color: var(--coral);
+	border: 1.5px solid rgba(216, 90, 48, 0.3);
+}
+.stat-highlight-cards {
+	background: var(--amber-l);
+	color: #9a640a;
+	border: 1.5px solid rgba(232, 153, 26, 0.35);
+}
+
 .card-chips {
 	display: flex;
 	gap: 6px;
