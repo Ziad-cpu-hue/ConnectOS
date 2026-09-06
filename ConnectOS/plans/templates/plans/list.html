@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+{% block title %}الباقات — ConnectOS{% endblock %}
+{% block page_title %}الباقات{% endblock %}
+{% block page_crumb %}الباقات المتاحة لتوليد الكروت منها{% endblock %}
+{% block page_action %}<a href="{% url 'plans:create' %}" class="btn btn-primary">+ باقة جديدة</a>{% endblock %}
+
+{% block content %}
+<div class="panel">
+  <div class="table-responsive">
+  <table>
+    <thead>
+      <tr><th>اسم الباقة</th><th>الكوطة</th><th>المدة</th><th>السرعة</th><th>السعر</th><th>الحالة</th><th></th></tr>
+    </thead>
+    <tbody>
+      {% for plan in plans %}
+      <tr>
+        <td>{{ plan.name }}</td>
+        <td class="mono">{% if plan.quota_mb %}{{ plan.quota_mb }} ميجا{% else %}غير محدودة{% endif %}</td>
+        <td>{{ plan.duration_days }} يوم</td>
+        <td class="mono">{% if plan.speed_limit_kbps %}{{ plan.speed_limit_kbps }} kbps{% else %}—{% endif %}</td>
+        <td class="mono">{{ plan.price }} ج</td>
+        <td>{% if plan.is_active %}<span class="badge badge-green">مفعّلة</span>{% else %}<span class="badge badge-gray">موقوفة</span>{% endif %}</td>
+        <td>
+          <form method="post" action="{% url 'plans:delete' plan.pk %}" style="display:inline;" onsubmit="return confirm('تأكيد حذف الباقة؟');">
+            {% csrf_token %}<button type="submit" class="btn btn-danger btn-sm">حذف</button>
+          </form>
+        </td>
+      </tr>
+      {% empty %}
+      <tr><td colspan="7"><div class="empty"><div class="e-icon">📦</div>مفيش باقات لسه. أنشئ أول باقة عشان تقدر تولّد منها كروت.</div></td></tr>
+      {% endfor %}
+    </tbody>
+  </table>
+  </div>
+</div>
+{% endblock %}
