@@ -1,0 +1,68 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>طباعة دفعة #{{ batch.id }} — ConnectOS</title>
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700;800&family=JetBrains+Mono:wght@700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="{% static 'css/style.css' %}">
+<style>
+  body{background:#fff;color:#000;padding:24px;}
+  .toolbar{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:20px;}
+  .free-grid{display:flex;flex-wrap:wrap;gap:14px;}
+  @media screen and (max-width:400px){
+    body{padding:12px;}
+    .free-card, .free-grid > *{max-width:100%;}
+  }
+  .free-card{
+    position:relative;width:340px;height:190px;border-radius:14px;overflow:hidden;
+    border:1px dashed #cfc6ae;
+    background:linear-gradient(160deg,#F3EEDF,#EDE6D3);
+  }
+  .free-el{position:absolute;}
+  @media print{ .free-card{ break-inside:avoid; } }
+</style>
+</head>
+<body>
+  <div class="toolbar no-print">
+    <h2>دفعة #{{ batch.id }} — {{ batch.plan.name }} ({{ vouchers_with_qr|length }} كارت)</h2>
+    <button class="btn btn-primary" onclick="window.print()">🖨️ طباعة الآن</button>
+  </div>
+
+  {% if template and template.layout_json %}
+  {# ===== تصميم حر من مصمم السحب والإفلات ===== #}
+  <div class="free-grid">
+    {% for item in vouchers_with_qr %}
+    <div class="free-card" style="{% if template.background_image %}background:url('{{ template.background_image.url }}') center/cover;{% endif %}">
+      <div class="free-el" style="left:{{ layout.logo.x }}px;top:{{ layout.logo.y }}px;font-weight:800;font-size:{{ layout.logo.font_size }}px;color:{{ layout.logo.color }};">{{ template.logo_text }}</div>
+      <div class="free-el" style="left:{{ layout.price.x }}px;top:{{ layout.price.y }}px;font-weight:700;font-size:{{ layout.price.font_size }}px;color:{{ layout.price.color }};">{{ batch.plan.price }} ج</div>
+      <div class="free-el mono" style="left:{{ layout.code.x }}px;top:{{ layout.code.y }}px;font-weight:700;font-size:{{ layout.code.font_size }}px;color:{{ layout.code.color }};background:#fff;padding:6px 12px;border-radius:6px;letter-spacing:2px;border:1.5px dashed #d8cfb8;">{{ item.voucher.code }}</div>
+      {% if item.qr %}
+      <img class="free-el" src="{{ item.qr }}" style="left:{{ layout.qr.x }}px;top:{{ layout.qr.y }}px;width:{{ layout.qr.size }}px;height:{{ layout.qr.size }}px;">
+      {% endif %}
+    </div>
+    {% endfor %}
+  </div>
+
+  {% else %}
+  {# ===== تصميم افتراضي بسيط (قبل استخدام المصمم) ===== #}
+  <div class="print-grid">
+    {% for item in vouchers_with_qr %}
+    <div class="pvoucher" style="{% if template %}background:linear-gradient(160deg, {{ template.primary_color }}22, {{ template.secondary_color }}22);{% endif %}">
+      <div class="pv-top">
+        <span>{% if template %}{{ template.logo_text }}{% else %}ConnectOS{% endif %}</span>
+        <span>{{ batch.plan.price }} ج</span>
+      </div>
+      <div class="pv-code">{{ item.voucher.code }}</div>
+      <div class="pv-meta">
+        <span>{% if batch.plan.quota_mb %}{{ batch.plan.quota_mb }} ميجا{% else %}غير محدود{% endif %}</span>
+        <span>{{ batch.plan.duration_days }} يوم</span>
+        {% if template.support_phone %}<span>{{ template.support_phone }}</span>{% endif %}
+      </div>
+    </div>
+    {% endfor %}
+  </div>
+  {% endif %}
+</body>
+</html>

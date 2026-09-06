@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+{% block page_title %}قوالب الكروت{% endblock %}
+{% block page_crumb %}شكل الكارت اللي هيتطبع لمحلاتك{% endblock %}
+{% block page_action %}<a href="{% url 'vouchers:template_create' %}" class="btn btn-primary">+ قالب جديد</a>{% endblock %}
+
+{% block content %}
+<div class="print-grid">
+  {% for t in templates %}
+  <div class="panel" style="padding:0;overflow:hidden;">
+    <div class="pvoucher" style="border-radius:0;background:linear-gradient(160deg, {{ t.primary_color }}33, {{ t.secondary_color }}33);">
+      <div class="pv-top"><span>{{ t.logo_text }}</span><span>عيّنة</span></div>
+      <div class="pv-code">1234 567 890</div>
+      <div class="pv-meta"><span>500 ميجا</span><span>1 يوم</span></div>
+    </div>
+    <div style="padding:16px;">
+      <strong>{{ t.name }}</strong>
+      {% if t.is_default %}<span class="badge badge-green" style="margin-right:8px;">افتراضي</span>{% endif %}
+      <div style="margin-top:10px;"><a href="{% url 'vouchers:template_designer' t.pk %}" class="btn btn-ghost btn-sm">🎨 مصمم السحب والإفلات</a></div>
+    </div>
+  </div>
+  {% empty %}
+  <div class="empty"><div class="e-icon">🎨</div>مفيش قوالب مصممة لسه. أنشئ أول قالب بألوان شبكتك.</div>
+  {% endfor %}
+</div>
+{% endblock %}

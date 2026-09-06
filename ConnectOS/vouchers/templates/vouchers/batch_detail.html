@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+{% block page_title %}دفعة #{{ batch.id }}{% endblock %}
+{% block page_crumb %}{{ batch.plan.name }} — {{ batch.quantity }} كارت{% endblock %}
+{% block page_action %}<a href="{% url 'vouchers:batch_print' batch.pk %}" class="btn btn-primary">🖨️ طباعة الدفعة</a>{% endblock %}
+
+{% block content %}
+<div class="panel">
+  <div class="table-responsive">
+  <table>
+    <thead><tr><th>الكود</th><th>الحالة</th><th>تاريخ التفعيل</th><th>تاريخ الانتهاء</th></tr></thead>
+    <tbody>
+      {% for v in vouchers %}
+      <tr>
+        <td class="mono card-code">{{ v.code }}</td>
+        <td>
+          {% if v.status == 'active' %}<span class="badge badge-green">مفعّل</span>
+          {% elif v.status == 'expired' %}<span class="badge badge-red">منتهي</span>
+          {% else %}<span class="badge badge-gray">غير مستخدم</span>{% endif %}
+        </td>
+        <td>{{ v.activated_at|date:"Y-m-d H:i"|default:"—" }}</td>
+        <td>{{ v.expires_at|date:"Y-m-d H:i"|default:"—" }}</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+  </div>
+</div>
+{% endblock %}

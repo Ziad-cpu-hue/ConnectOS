@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+{% block title %}الملف الشخصي — ConnectOS{% endblock %}
+{% block page_title %}الملف الشخصي{% endblock %}
+{% block page_crumb %}بيانات حسابك الشخصي ككل مدير للنظام{% endblock %}
+
+{% block content %}
+<div class="panel" style="max-width:520px;">
+  <form method="post">
+    {% csrf_token %}
+    <div class="form-group">
+      <label>اسم المستخدم</label>
+      <input class="field" type="text" value="{{ u.username }}" disabled>
+    </div>
+    <div class="form-group">
+      <label>الاسم الكامل</label>
+      <input class="field" type="text" name="full_name" value="{{ u.first_name }}">
+    </div>
+    <div class="form-group">
+      <label>رقم الهاتف</label>
+      <input class="field" type="text" name="phone" value="{{ u.phone }}">
+    </div>
+    <div class="form-group">
+      <label>كلمة مرور جديدة (اتركه فارغًا لو مش عايز تغيّرها)</label>
+      <input class="field" type="password" name="new_password" placeholder="••••••••">
+    </div>
+    <button type="submit" class="btn btn-primary btn-block">حفظ التعديلات</button>
+  </form>
+</div>
+{% endblock %}

@@ -1,0 +1,157 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>{% block title %}ConnectOS{% endblock %}</title>
+<link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@300;400;500;700;800;900&family=Plus+Jakarta+Sans:wght@700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20,400,0,0&display=block">
+<link rel="stylesheet" href="{% static 'css/style.css' %}">
+</head>
+<body>
+{% if company_unpaid %}
+<div class="status-bar status-bar-warning no-print">
+  <span class="material-symbols-outlined">hourglass_top</span>
+  حسابك لسه بانتظار تأكيد الدفع من إدارة المنصة — تقدر تتصفح لوحة التحكم عادي، لكن مش هتقدر تستخدم أي ميزة (إضافة جهاز، مشترك، كروت...) لحد ما يتم التفعيل.
+</div>
+{% elif company_just_activated %}
+<div class="status-bar status-bar-success no-print">
+  <span class="material-symbols-outlined">check_circle</span>
+  تم تفعيل حسابك بنجاح! كل مميزات المنصة متاحة لك دلوقتي.
+</div>
+{% endif %}
+<div class="page-wrap">
+<div class="shell">
+  <aside class="sidebar no-print">
+    <div class="sb-logo">Connect<span>OS</span></div>
+    <nav class="sb-nav">
+      <a href="{% url 'dashboard:home' %}" class="sb-link {% if request.resolver_match.url_name == 'home' %}active{% endif %}"><span class="sb-ico"><span class="material-symbols-outlined">space_dashboard</span></span><span class="sb-txt">نظرة عامة</span></a>
+      <a href="{% url 'subscribers:list' %}" class="sb-link {% if 'subscribers' in request.path %}active{% endif %}"><span class="sb-ico"><span class="material-symbols-outlined">group</span></span><span class="sb-txt">المشتركون</span></a>
+      <a href="{% url 'nas_manager:list' %}" class="sb-link {% if request.resolver_match.url_name == 'list' and 'nas' in request.path %}active{% endif %}"><span class="sb-ico"><span class="material-symbols-outlined">router</span></span><span class="sb-txt">الأجهزة</span></a>
+      <a href="{% url 'nas_manager:device_unlock_list' %}" class="sb-link {% if 'unlock' in request.path %}active{% endif %}"><span class="sb-ico"><span class="material-symbols-outlined">lock_open</span></span><span class="sb-txt">فتح الأجهزة</span></a>
+      <a href="{% url 'radius_core:online_now' %}" class="sb-link {% if 'radius' in request.path %}active{% endif %}"><span class="sb-ico"><span class="material-symbols-outlined">wifi_tethering</span></span><span class="sb-txt">المتصلين الآن</span></a>
+      <a href="{% url 'dashboard:statistics' %}" class="sb-link {% if request.resolver_match.url_name == 'statistics' %}active{% endif %}"><span class="sb-ico"><span class="material-symbols-outlined">bar_chart</span></span><span class="sb-txt">الإحصائيات</span></a>
+      <a href="{% url 'dashboard:consumption' %}" class="sb-link {% if request.resolver_match.url_name == 'consumption' %}active{% endif %}"><span class="sb-ico"><span class="material-symbols-outlined">network_check</span></span><span class="sb-txt">الاستهلاك</span></a>
+      <a href="{% url 'plans:list' %}" class="sb-link {% if 'plans' in request.path %}active{% endif %}"><span class="sb-ico"><span class="material-symbols-outlined">inventory_2</span></span><span class="sb-txt">الباقات</span></a>
+      <a href="{% url 'vouchers:batch_list' %}" class="sb-link {% if 'vouchers' in request.path and 'topup' not in request.path %}active{% endif %}"><span class="sb-ico"><span class="material-symbols-outlined">credit_card</span></span><span class="sb-txt">الكروت</span></a>
+      <a href="{% url 'vouchers:topup_batch_list' %}" class="sb-link {% if 'topup' in request.path %}active{% endif %}"><span class="sb-ico"><span class="material-symbols-outlined">account_balance_wallet</span></span><span class="sb-txt">كروت شحن الرصيد</span></a>
+      <a href="{% url 'debts:reseller_list' %}" class="sb-link {% if 'debts' in request.path %}active{% endif %}"><span class="sb-ico"><span class="material-symbols-outlined">receipt_long</span></span><span class="sb-txt">الديون والموزعين</span></a>
+      <a href="{% url 'payments:checkout' %}" class="sb-link {% if 'payments' in request.path %}active{% endif %}"><span class="sb-ico"><span class="material-symbols-outlined">payments</span></span><span class="sb-txt">شحن رصيد المنصة</span></a>
+      <a href="{% url 'notifications:settings' %}" class="sb-link {% if 'notifications' in request.path %}active{% endif %}"><span class="sb-ico"><span class="material-symbols-outlined">notifications</span></span><span class="sb-txt">التنبيهات</span></a>
+      <a href="{% url 'dashboard:team' %}" class="sb-link {% if 'team' in request.path %}active{% endif %}"><span class="sb-ico"><span class="material-symbols-outlined">groups</span></span><span class="sb-txt">الحسابات الفرعية</span></a>
+      <a href="{% url 'dashboard:trash' %}" class="sb-link {% if 'trash' in request.path %}active{% endif %}"><span class="sb-ico"><span class="material-symbols-outlined">delete</span></span><span class="sb-txt">سلة المهملات</span></a>
+      <a href="{% url 'dashboard:settings' %}" class="sb-link {% if request.resolver_match.url_name == 'settings' %}active{% endif %}"><span class="sb-ico"><span class="material-symbols-outlined">settings</span></span><span class="sb-txt">الإعدادات</span></a>
+      <a href="{% url 'dashboard:profile' %}" class="sb-link {% if request.resolver_match.url_name == 'profile' %}active{% endif %}"><span class="sb-ico"><span class="material-symbols-outlined">account_circle</span></span><span class="sb-txt">الملف الشخصي</span></a>
+      {% if request.user.role == 'platform_admin' %}
+      <a href="{% url 'dashboard:platform_overview' %}" class="sb-link {% if 'platform' in request.path %}active{% endif %}"><span class="sb-ico"><span class="material-symbols-outlined">apartment</span></span><span class="sb-txt">عملاء المنصة</span></a>
+      {% endif %}
+    </nav>
+    <div class="sb-spacer"></div>
+    <div class="sb-user">
+      <div class="sb-user-row">
+        <div class="u-avatar">{{ request.user.get_full_name|default:request.user.username|first|upper }}</div>
+        <div class="u-info">
+          <div class="u-name">{{ request.user.get_full_name|default:request.user.username }}</div>
+          <div class="u-role">{{ request.user.get_role_display }}</div>
+        </div>
+      </div>
+      <a href="{% url 'core:logout' %}" class="btn btn-ghost btn-sm btn-block">تسجيل الخروج</a>
+    </div>
+  </aside>
+
+  <div class="sidebar-backdrop no-print" id="sidebarBackdrop"></div>
+
+  <main class="main">
+    <div class="topbar">
+      <div class="topbar-title">
+        <button type="button" class="mobile-menu-btn no-print" id="sidebarToggle" aria-label="فتح القائمة الجانبية">
+          <span class="material-symbols-outlined">menu</span>
+        </button>
+        <div>
+          <h1>{% block page_title %}{% endblock %}</h1>
+          <div class="crumb">{% block page_crumb %}{% endblock %}</div>
+        </div>
+      </div>
+      <div class="no-print topbar-actions">{% block page_action %}{% endblock %}</div>
+    </div>
+
+    {% if messages %}
+    <ul class="messages">
+      {% for message in messages %}<li class="tag-{{ message.tags|default:'success' }}">{{ message }}</li>{% endfor %}
+    </ul>
+    {% endif %}
+
+    {% block content %}{% endblock %}
+  </main>
+</div>
+</div>
+
+<div id="appModalOverlay" class="app-modal-overlay">
+  <div class="app-modal">
+    <div class="app-modal-icon" id="appModalIcon"><span class="material-symbols-outlined">warning</span></div>
+    <div class="app-modal-text" id="appModalText"></div>
+    <button type="button" class="btn btn-primary btn-block" id="appModalOk">تمام، فهمت</button>
+  </div>
+</div>
+<script id="app-messages-data" type="application/json">[{% for message in messages %}{"tags": "{{ message.tags|default:'success'|escapejs }}", "text": "{{ message|escapejs }}"}{% if not forloop.last %},{% endif %}{% endfor %}]</script>
+<script>
+(function(){
+  var raw = document.getElementById('app-messages-data');
+  var data = [];
+  try { data = JSON.parse(raw.textContent || '[]'); } catch (e) { data = []; }
+  var important = data.find(function(m){ return m.tags.indexOf('error') > -1 || m.tags.indexOf('warning') > -1; });
+  if (!important) return;
+
+  var overlay = document.getElementById('appModalOverlay');
+  var modal = overlay.querySelector('.app-modal');
+  var iconSpan = document.querySelector('#appModalIcon .material-symbols-outlined');
+  var textEl = document.getElementById('appModalText');
+  var okBtn = document.getElementById('appModalOk');
+
+  modal.classList.add('is-danger');
+  iconSpan.textContent = 'error';
+  textEl.textContent = important.text;
+
+  function closeModal(){
+    overlay.classList.remove('open');
+    document.body.style.overflow = '';
+  }
+  okBtn.addEventListener('click', closeModal);
+  overlay.addEventListener('click', function(e){ if (e.target === overlay) closeModal(); });
+  document.addEventListener('keydown', function(e){ if (e.key === 'Escape') closeModal(); });
+
+  requestAnimationFrame(function(){
+    overlay.classList.add('open');
+    document.body.style.overflow = 'hidden';
+  });
+})();
+</script>
+<script>
+(function(){
+  var btn = document.getElementById('sidebarToggle');
+  var sidebar = document.querySelector('.sidebar');
+  var backdrop = document.getElementById('sidebarBackdrop');
+  if (!btn || !sidebar || !backdrop) return;
+
+  function openMenu(){
+    sidebar.classList.add('open');
+    backdrop.classList.add('open');
+    document.body.style.overflow = 'hidden';
+  }
+  function closeMenu(){
+    sidebar.classList.remove('open');
+    backdrop.classList.remove('open');
+    document.body.style.overflow = '';
+  }
+
+  btn.addEventListener('click', openMenu);
+  backdrop.addEventListener('click', closeMenu);
+  document.addEventListener('keydown', function(e){ if (e.key === 'Escape') closeMenu(); });
+  sidebar.querySelectorAll('a').forEach(function(link){
+    link.addEventListener('click', closeMenu);
+  });
+})();
+</script>
+</body>
+</html>

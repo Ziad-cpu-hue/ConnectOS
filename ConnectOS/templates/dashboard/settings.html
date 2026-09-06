@@ -1,0 +1,53 @@
+{% extends "base.html" %}
+{% block page_title %}الإعدادات{% endblock %}
+{% block page_crumb %}تحكم في سلوك النظام التلقائي لشركتك{% endblock %}
+{% block content %}
+<div class="panel" style="max-width:640px;">
+  <form method="post">
+    {% csrf_token %}
+
+    <div class="form-group" style="border-bottom:1px solid var(--border);padding-bottom:16px;margin-bottom:16px;">
+      <label style="display:flex;align-items:center;gap:8px;font-weight:700;">
+        <input type="checkbox" name="auto_suspend_enabled" {% if s.auto_suspend_enabled %}checked{% endif %}>
+        إيقاف المشتركين المنتهيين تلقائيًا
+      </label>
+      <p style="color:var(--text-muted);font-size:12.5px;margin:6px 0 10px;">
+        سيقوم النظام بإيقاف المشتركين المديونين/المنتهيين بعد الموعد المحدد يوميًا
+      </p>
+      <label for="auto_suspend_time">موعد الإيقاف اليومي</label>
+      <input type="time" id="auto_suspend_time" name="auto_suspend_time" class="field" value="{{ s.auto_suspend_time|time:'H:i' }}">
+    </div>
+
+    <div class="form-group" style="border-bottom:1px solid var(--border);padding-bottom:16px;margin-bottom:16px;">
+      <label style="display:flex;align-items:center;gap:8px;font-weight:700;">
+        <input type="checkbox" name="auto_delete_expired_enabled" {% if s.auto_delete_expired_enabled %}checked{% endif %}>
+        نقل المشتركين المنتهيين لسلة المهملات تلقائيًا
+      </label>
+      <p style="color:var(--text-muted);font-size:12.5px;margin:6px 0 10px;">
+        إذا لم يجدد العميل الاشتراك سيقوم النظام بنقله لسلة المهملات بعد المدة المحددة
+      </p>
+      <label for="auto_delete_grace_days">بعد كام يوم من الانتهاء</label>
+      <input type="number" id="auto_delete_grace_days" name="auto_delete_grace_days" class="field" min="1" value="{{ s.auto_delete_grace_days }}">
+    </div>
+
+    <div class="form-group" style="border-bottom:1px solid var(--border);padding-bottom:16px;margin-bottom:16px;">
+      <label style="display:flex;align-items:center;gap:8px;font-weight:700;">
+        <input type="checkbox" name="single_server_login_enabled" {% if s.single_server_login_enabled %}checked{% endif %}>
+        السماح للمشترك بالدخول من أي سيرفر
+      </label>
+      <p style="color:var(--text-muted);font-size:12.5px;margin:6px 0 0;">
+        لو متوقف، هيتقفل المشترك على أول سيرفر دخل بيه بس
+      </p>
+    </div>
+
+    <div class="form-group">
+      <label style="display:flex;align-items:center;gap:8px;font-weight:700;">
+        <input type="checkbox" name="auto_search_enabled" {% if s.auto_search_enabled %}checked{% endif %}>
+        تفعيل البحث التلقائي عند الكتابة
+      </label>
+    </div>
+
+    <button type="submit" class="btn btn-primary" style="margin-top:16px;">حفظ الإعدادات</button>
+  </form>
+</div>
+{% endblock %}

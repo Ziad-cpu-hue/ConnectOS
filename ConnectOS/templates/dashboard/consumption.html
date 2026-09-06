@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+{% block title %}الاستهلاك — ConnectOS{% endblock %}
+{% block page_title %}استهلاك السيرفرات{% endblock %}
+{% block page_crumb %}استهلاك الباندويدث الفعلي لكل جهاز، من بيانات RADIUS الحقيقية{% endblock %}
+
+{% block content %}
+<div class="panel">
+  <div class="table-responsive">
+  <table>
+    <thead><tr><th>اسم الجهاز</th><th>IP</th><th>عدد الجلسات</th><th>إجمالي الاستهلاك</th></tr></thead>
+    <tbody>
+      {% for row in rows %}
+      <tr>
+        <td>{{ row.nas.name }}</td>
+        <td class="mono">{{ row.nas.ip_address }}</td>
+        <td>{{ row.sessions_count }}</td>
+        <td><strong>{{ row.total_mb }} MB</strong></td>
+      </tr>
+      {% empty %}
+      <tr><td colspan="4"><div class="empty">
+        <div class="e-icon">📶</div>
+        لا يوجد استهلاك مسجل بعد. الشاشة دي بتتغذى تلقائيًا من جلسات RADIUS
+        الحقيقية بمجرد ما أجهزتك تبدأ تبعت بيانات Accounting فعلية.
+      </div></td></tr>
+      {% endfor %}
+    </tbody>
+  </table>
+  </div>
+</div>
+{% endblock %}
