@@ -1,0 +1,695 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ConnectOS — تشغّل شبكتك من مكان واحد</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#0A1F1D;
+    --bg-elevated:#0F2B28;
+    --bg-card:#0D2724;
+    --teal:#1BA89B;
+    --teal-light:#4FD8C9;
+    --gold:#E7A83D;
+    --gold-light:#F5C877;
+    --cream:#F3EEDF;
+    --text:#F5F7F6;
+    --text-muted:#93AFAB;
+    --line:rgba(245,247,246,0.09);
+    --radius:18px;
+  }
+  *{margin:0;padding:0;box-sizing:border-box;}
+  html{scroll-behavior:smooth;}
+  body{
+    background:var(--bg);
+    color:var(--text);
+    font-family:'Cairo',sans-serif;
+    direction:rtl;
+    overflow-x:hidden;
+    line-height:1.7;
+  }
+  .mono{font-family:'JetBrains Mono',monospace;}
+  a{color:inherit;text-decoration:none;}
+  img{max-width:100%;display:block;}
+  .wrap{max-width:1180px;margin:0 auto;padding:0 28px;}
+  ::selection{background:var(--teal);color:#04120F;}
+
+  /* subtle ambient background texture */
+  body::before{
+    content:"";
+    position:fixed;inset:0;
+    background:
+      radial-gradient(ellipse 700px 500px at 85% -5%, rgba(27,168,155,0.16), transparent 60%),
+      radial-gradient(ellipse 600px 500px at 5% 15%, rgba(231,168,61,0.10), transparent 60%);
+    pointer-events:none;
+    z-index:0;
+  }
+
+  /* ===== Header ===== */
+  header{
+    position:sticky; top:0; z-index:50;
+    background:rgba(10,31,29,0.72);
+    backdrop-filter:blur(14px);
+    border-bottom:1px solid var(--line);
+  }
+  .nav{display:flex;align-items:center;justify-content:space-between;padding:18px 28px;}
+  .logo{display:flex;align-items:center;gap:10px;font-weight:800;font-size:20px;letter-spacing:.3px;}
+  .logo .dot{
+    width:11px;height:11px;border-radius:3px;
+    background:linear-gradient(135deg,var(--teal-light),var(--teal));
+    box-shadow:0 0 14px rgba(27,168,155,.7);
+  }
+  .nav-links{display:flex;gap:34px;font-size:15px;color:var(--text-muted);}
+  .nav-links a{transition:color .2s;}
+  .nav-links a:hover{color:var(--teal-light);}
+  .nav-cta{display:flex;align-items:center;gap:14px;}
+  .btn{
+    display:inline-flex;align-items:center;justify-content:center;gap:8px;
+    padding:11px 24px; border-radius:12px; font-weight:700; font-size:14.5px;
+    cursor:pointer; border:none; transition:transform .18s ease, box-shadow .18s ease, background .2s;
+  }
+  .btn-primary{
+    background:linear-gradient(135deg,var(--teal-light),var(--teal));
+    color:#04120F;
+    box-shadow:0 8px 24px -8px rgba(27,168,155,0.7);
+  }
+  .btn-primary:hover{transform:translateY(-2px);box-shadow:0 12px 28px -8px rgba(27,168,155,0.85);}
+  .btn-ghost{color:var(--text);border:1px solid var(--line);background:transparent;}
+  .btn-ghost:hover{border-color:var(--teal);color:var(--teal-light);}
+
+  /* ===== Hero ===== */
+  .hero{position:relative;padding:88px 0 60px;z-index:1;}
+  .hero-grid{display:grid;grid-template-columns:1.15fr 0.85fr;gap:50px;align-items:center;}
+  .eyebrow{
+    display:inline-flex;align-items:center;gap:8px;
+    font-size:13px;font-weight:700;color:var(--gold-light);
+    background:rgba(231,168,61,0.1); border:1px solid rgba(231,168,61,0.3);
+    padding:7px 16px;border-radius:100px;margin-bottom:22px;
+  }
+  .eyebrow::before{content:"";width:6px;height:6px;border-radius:50%;background:var(--gold);}
+  h1{
+    font-size:clamp(34px,4.6vw,58px);
+    font-weight:900;
+    line-height:1.22;
+    letter-spacing:-.5px;
+    margin-bottom:22px;
+  }
+  h1 .accent{
+    background:linear-gradient(90deg,var(--teal-light),var(--gold-light));
+    -webkit-background-clip:text;background-clip:text;color:transparent;
+  }
+  .hero p.lead{
+    font-size:18px;color:var(--text-muted);max-width:520px;margin-bottom:34px;
+  }
+  .hero-actions{display:flex;gap:16px;flex-wrap:wrap;margin-bottom:44px;}
+  .btn-lg{padding:15px 30px;font-size:16px;border-radius:14px;}
+
+  .trust-row{display:flex;align-items:center;gap:22px;color:var(--text-muted);font-size:14px;}
+  .trust-row strong{color:var(--text);font-family:'JetBrains Mono',monospace;font-size:17px;}
+  .trust-sep{width:1px;height:28px;background:var(--line);}
+
+  /* ===== The signature ticket card ===== */
+  .ticket-stage{position:relative;height:520px;display:flex;align-items:center;justify-content:center;}
+  .ticket{
+    position:relative;
+    width:340px;
+    background:linear-gradient(160deg,var(--cream),#EDE6D3);
+    border-radius:16px;
+    color:#1A1410;
+    padding:26px 24px 22px;
+    box-shadow:0 40px 80px -20px rgba(0,0,0,0.6), 0 0 0 1px rgba(0,0,0,0.05);
+    transform:rotate(-6deg);
+    animation:float 6s ease-in-out infinite;
+  }
+  @keyframes float{
+    0%,100%{transform:rotate(-6deg) translateY(0px);}
+    50%{transform:rotate(-4deg) translateY(-14px);}
+  }
+  /* perforated torn top edge */
+  .ticket::before{
+    content:"";
+    position:absolute; top:-1px; right:0; left:0; height:14px;
+    background:radial-gradient(circle 8px at 14px 0, transparent 8px, var(--bg) 8.5px) ,
+               linear-gradient(var(--cream),var(--cream));
+    background-repeat:repeat-x, no-repeat;
+    background-size:28px 16px, 100% 100%;
+    background-position: top, top;
+    -webkit-mask-image: radial-gradient(circle 8px at 14px 0, transparent 8px, black 8.5px);
+    -webkit-mask-repeat: repeat-x;
+    -webkit-mask-size: 28px 16px;
+  }
+  .ticket-brand{display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;}
+  .ticket-brand .tb-logo{font-weight:900;font-size:17px;color:#0F2B28;display:flex;align-items:center;gap:6px;}
+  .ticket-brand .tb-logo::before{content:"";width:9px;height:9px;border-radius:2px;background:var(--teal);display:inline-block;}
+  .ticket-price{
+    background:linear-gradient(135deg,var(--gold),#D88A2A);
+    color:#fff; font-weight:800; font-size:14px;
+    padding:6px 14px;border-radius:8px;
+  }
+  .ticket-mid{display:flex;align-items:center;justify-content:space-between;margin:22px 0;}
+  .ticket-stat{text-align:center;flex:1;}
+  .ticket-stat .num{font-family:'JetBrains Mono',monospace;font-weight:700;font-size:22px;color:#0F2B28;}
+  .ticket-stat .lbl{font-size:11px;color:#6b6252;margin-top:2px;}
+  .ticket-divider{width:1px;height:34px;background:repeating-linear-gradient(to bottom,#c9c0a8 0 4px, transparent 4px 8px);}
+  .ticket-code{
+    background:#fff;border:1.5px dashed #d8cfb8;border-radius:10px;
+    text-align:center;padding:12px;font-family:'JetBrains Mono',monospace;
+    font-weight:700;font-size:20px;letter-spacing:2px;color:#1A1410;
+  }
+  .ticket-foot{display:flex;align-items:center;justify-content:center;gap:6px;margin-top:14px;font-size:12px;color:#8a8065;}
+
+  .ticket-2{
+    position:absolute; width:220px; left:-10px; bottom:20px;
+    background:linear-gradient(160deg,#123A37,#0B2624);
+    color:var(--cream);
+    border-radius:14px; padding:16px 18px;
+    transform:rotate(9deg);
+    box-shadow:0 30px 60px -15px rgba(0,0,0,0.55);
+    animation:float2 7s ease-in-out infinite;
+    border:1px solid rgba(255,255,255,0.08);
+  }
+  @keyframes float2{
+    0%,100%{transform:rotate(9deg) translateY(0px);}
+    50%{transform:rotate(7deg) translateY(10px);}
+  }
+  .ticket-2 .t2-top{display:flex;justify-content:space-between;font-size:12px;color:var(--teal-light);margin-bottom:8px;font-weight:700;}
+  .ticket-2 .t2-code{font-family:'JetBrains Mono',monospace;font-weight:700;font-size:16px;letter-spacing:1.5px;}
+
+  .glow-blob{
+    position:absolute; width:380px;height:380px;border-radius:50%;
+    background:radial-gradient(circle,rgba(27,168,155,0.35),transparent 70%);
+    filter:blur(10px); z-index:-1; top:10%; right:0;
+  }
+
+  /* ===== Stats strip ===== */
+  .stats{
+    border-top:1px solid var(--line); border-bottom:1px solid var(--line);
+    background:rgba(255,255,255,0.015);
+  }
+  .stats-grid{display:grid;grid-template-columns:repeat(4,1fr);padding:38px 0;}
+  .stat{text-align:center;position:relative;}
+  .stat:not(:last-child)::after{content:"";position:absolute;left:0;top:10%;height:80%;width:1px;background:var(--line);}
+  .stat .num{font-family:'JetBrains Mono',monospace;font-weight:700;font-size:32px;color:var(--teal-light);}
+  .stat .lbl{color:var(--text-muted);font-size:14px;margin-top:6px;}
+
+  /* ===== Section heading ===== */
+  section{padding:100px 0;position:relative;z-index:1;}
+  .sec-head{max-width:640px;margin-bottom:56px;}
+  .sec-eyebrow{color:var(--gold-light);font-weight:700;font-size:13.5px;margin-bottom:12px;display:block;}
+  .sec-head h2{font-size:clamp(26px,3.2vw,40px);font-weight:800;line-height:1.3;margin-bottom:14px;}
+  .sec-head p{color:var(--text-muted);font-size:16.5px;}
+
+  /* ===== Features ===== */
+  .feat-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:20px;}
+  .feat-card{
+    background:linear-gradient(160deg,var(--bg-card),rgba(13,39,36,0.4));
+    border:1px solid var(--line); border-radius:var(--radius);
+    padding:30px 26px; transition:transform .25s ease, border-color .25s ease, background .25s;
+  }
+  .feat-card:hover{transform:translateY(-6px);border-color:rgba(27,168,155,0.4);background:linear-gradient(160deg,#123A37,rgba(13,39,36,0.4));}
+  .feat-icon{
+    width:46px;height:46px;border-radius:12px;
+    background:linear-gradient(135deg,rgba(27,168,155,0.25),rgba(231,168,61,0.15));
+    display:flex;align-items:center;justify-content:center;
+    font-size:21px; margin-bottom:20px;
+    border:1px solid rgba(27,168,155,0.25);
+  }
+  .feat-card h3{font-size:18.5px;font-weight:700;margin-bottom:10px;}
+  .feat-card p{color:var(--text-muted);font-size:14.8px;}
+  .feat-card.wide{grid-column:span 1;}
+
+  /* ===== How it works ===== */
+  .flow{background:var(--bg-elevated);}
+  .flow-steps{display:grid;grid-template-columns:repeat(3,1fr);gap:0;position:relative;}
+  .flow-steps::before{
+    content:""; position:absolute; top:26px; right:16.5%; left:16.5%; height:1px;
+    background:repeating-linear-gradient(to left, var(--teal) 0 8px, transparent 8px 16px);
+    opacity:.5;
+  }
+  .flow-step{padding:0 24px;position:relative;}
+  .flow-num{
+    width:52px;height:52px;border-radius:14px;
+    background:linear-gradient(135deg,var(--teal),var(--teal-light));
+    color:#04120F; font-weight:800; font-size:19px; font-family:'JetBrains Mono',monospace;
+    display:flex;align-items:center;justify-content:center; margin-bottom:22px;
+    box-shadow:0 10px 26px -8px rgba(27,168,155,0.6);
+    position:relative; z-index:2;
+  }
+  .flow-step h4{font-size:18px;font-weight:700;margin-bottom:10px;}
+  .flow-step p{color:var(--text-muted);font-size:14.8px;}
+
+  /* ===== Dashboard preview ===== */
+  .preview-shell{
+    border-radius:22px; border:1px solid var(--line);
+    background:linear-gradient(160deg,#0D2724,#0A1F1D);
+    padding:14px; box-shadow:0 60px 100px -40px rgba(0,0,0,.7);
+  }
+  .preview-topbar{display:flex;gap:7px;padding:10px 12px;}
+  .preview-topbar span{width:10px;height:10px;border-radius:50%;background:rgba(255,255,255,0.15);}
+  .preview-body{
+    background:var(--bg-card); border-radius:14px; padding:26px;
+    display:grid; grid-template-columns:220px 1fr; gap:22px; min-height:380px;
+  }
+  .p-side{display:flex;flex-direction:column;gap:10px;}
+  .p-side .p-item{
+    padding:11px 14px;border-radius:10px;font-size:14px;color:var(--text-muted);
+    display:flex;align-items:center;gap:10px;
+  }
+  .p-side .p-item.active{background:rgba(27,168,155,0.15);color:var(--teal-light);font-weight:700;border:1px solid rgba(27,168,155,0.3);}
+  .p-main{display:grid;grid-template-rows:auto 1fr;gap:18px;}
+  .p-cards{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;}
+  .p-card{background:rgba(255,255,255,0.03);border:1px solid var(--line);border-radius:12px;padding:16px;}
+  .p-card .pc-lbl{font-size:12px;color:var(--text-muted);margin-bottom:8px;}
+  .p-card .pc-val{font-family:'JetBrains Mono',monospace;font-weight:700;font-size:22px;}
+  .p-card .pc-val.up{color:var(--teal-light);}
+  .p-card .pc-val.warn{color:var(--gold-light);}
+  .p-chart{background:rgba(255,255,255,0.03);border:1px solid var(--line);border-radius:12px;padding:18px;display:flex;align-items:flex-end;gap:8px;height:150px;}
+  .p-chart .bar{flex:1;background:linear-gradient(180deg,var(--teal-light),var(--teal));border-radius:5px 5px 0 0;opacity:.85;}
+
+  /* ===== Voucher designer teaser ===== */
+  .designer{display:grid;grid-template-columns:0.9fr 1.1fr;gap:60px;align-items:center;}
+  .designer-panel{
+    background:linear-gradient(160deg,var(--bg-card),rgba(13,39,36,0.5));
+    border:1px solid var(--line);border-radius:var(--radius);padding:30px;
+  }
+  .swatches{display:flex;gap:10px;margin:18px 0 22px;}
+  .swatch{width:36px;height:36px;border-radius:10px;border:2px solid transparent;cursor:pointer;}
+  .swatch.active{border-color:var(--text);}
+  .tpl-list{display:flex;flex-direction:column;gap:10px;}
+  .tpl-row{display:flex;align-items:center;justify-content:space-between;padding:12px 14px;border-radius:10px;background:rgba(255,255,255,0.03);border:1px solid var(--line);font-size:14px;}
+  .tpl-row.sel{border-color:var(--teal);background:rgba(27,168,155,0.08);}
+  .tag{font-size:11px;padding:4px 9px;border-radius:100px;background:rgba(27,168,155,0.15);color:var(--teal-light);font-weight:700;}
+
+  /* ===== Owner analytics section ===== */
+  .owner-list{display:grid;grid-template-columns:repeat(2,1fr);gap:16px;margin-top:10px;}
+  .owner-item{display:flex;gap:14px;align-items:flex-start;padding:18px;border-radius:14px;border:1px solid var(--line);background:rgba(255,255,255,0.02);}
+  .owner-item .oi-ico{font-size:19px;width:38px;height:38px;border-radius:10px;background:rgba(231,168,61,0.12);border:1px solid rgba(231,168,61,0.3);display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+  .owner-item h4{font-size:15.5px;font-weight:700;margin-bottom:4px;}
+  .owner-item p{font-size:13.8px;color:var(--text-muted);}
+
+  /* ===== Pricing ===== */
+  .pricing-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:22px;}
+  .price-card{
+    border-radius:var(--radius);border:1px solid var(--line);padding:32px 28px;
+    background:rgba(255,255,255,0.02);
+    display:flex;flex-direction:column;
+  }
+  .price-card.pop{
+    border-color:var(--teal);
+    background:linear-gradient(160deg,rgba(27,168,155,0.1),rgba(13,39,36,0.5));
+    position:relative; transform:scale(1.03);
+  }
+  .pop-badge{
+    position:absolute;top:-13px;right:28px;
+    background:linear-gradient(135deg,var(--gold),#D88A2A);
+    color:#fff;font-size:12px;font-weight:800;padding:5px 14px;border-radius:100px;
+  }
+  .price-card h3{font-size:19px;font-weight:700;margin-bottom:6px;}
+  .price-card .sub{color:var(--text-muted);font-size:13.5px;margin-bottom:20px;}
+  .price-val{display:flex;align-items:baseline;gap:8px;margin-bottom:26px;}
+  .price-val .amt{font-family:'JetBrains Mono',monospace;font-size:38px;font-weight:700;}
+  .price-val .per{color:var(--text-muted);font-size:14px;}
+  .price-feats{list-style:none;display:flex;flex-direction:column;gap:12px;margin-bottom:28px;flex:1;}
+  .price-feats li{font-size:14.3px;color:var(--text-muted);display:flex;gap:10px;align-items:flex-start;}
+  .price-feats li::before{content:"✓";color:var(--teal-light);font-weight:800;}
+
+  /* ===== CTA band ===== */
+  .cta-band{
+    margin:0 auto; max-width:1180px;
+    background:linear-gradient(120deg,#123A37,#0B2624 60%,#1B2E1A);
+    border-radius:28px; padding:64px 60px; text-align:center;
+    border:1px solid rgba(27,168,155,0.3);
+    position:relative; overflow:hidden;
+  }
+  .cta-band::after{
+    content:""; position:absolute; inset:0;
+    background:radial-gradient(circle 300px at 80% 0%, rgba(231,168,61,0.18), transparent);
+  }
+  .cta-band h2{font-size:clamp(24px,3vw,36px);font-weight:800;margin-bottom:16px;position:relative;}
+  .cta-band p{color:var(--text-muted);margin-bottom:30px;position:relative;}
+
+  /* ===== Footer ===== */
+  footer{border-top:1px solid var(--line);padding:64px 0 30px;}
+  .foot-grid{display:grid;grid-template-columns:1.4fr 1fr 1fr 1fr;gap:40px;margin-bottom:50px;}
+  .foot-brand p{color:var(--text-muted);font-size:14px;margin-top:14px;max-width:280px;}
+  .foot-col h5{font-size:14px;margin-bottom:16px;color:var(--text-muted);}
+  .foot-col a{display:block;font-size:14.3px;margin-bottom:11px;color:var(--text);}
+  .foot-col a:hover{color:var(--teal-light);}
+  .foot-bottom{
+    display:flex;justify-content:space-between;align-items:center;
+    padding-top:26px;border-top:1px solid var(--line);
+    color:var(--text-muted);font-size:13.5px;flex-wrap:wrap;gap:12px;
+  }
+
+  @media (max-width:900px){
+    .hero-grid{grid-template-columns:1fr;}
+    .ticket-stage{height:400px;}
+    .nav-links{display:none;}
+    .feat-grid{grid-template-columns:1fr 1fr;}
+    .stats-grid{grid-template-columns:repeat(2,1fr);gap:24px;}
+    .flow-steps{grid-template-columns:1fr;gap:36px;}
+    .flow-steps::before{display:none;}
+    .designer{grid-template-columns:1fr;}
+    .preview-body{grid-template-columns:1fr;}
+    .p-side{display:none;}
+    .pricing-grid{grid-template-columns:1fr;}
+    .price-card.pop{transform:none;}
+    .foot-grid{grid-template-columns:1fr 1fr;}
+    .owner-list{grid-template-columns:1fr;}
+    .cta-band{padding:44px 26px;}
+  }
+  @media (max-width:600px){
+    .feat-grid{grid-template-columns:1fr;}
+    .foot-grid{grid-template-columns:1fr;}
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="wrap nav">
+    <div class="logo"><span class="dot"></span> ConnectOS</div>
+    <nav class="nav-links">
+      <a href="#features">المميزات</a>
+      <a href="#flow">آلية العمل</a>
+      <a href="#dashboard">لوحة التحكم</a>
+      <a href="#pricing">الأسعار</a>
+    </nav>
+    <div class="nav-cta">
+      <a href="{% url 'core:login' %}" class="btn btn-ghost">تسجيل الدخول</a>
+      <a href="{% url 'core:signup' %}" class="btn btn-primary">ابدأ مجانًا</a>
+    </div>
+  </div>
+</header>
+
+<section class="hero">
+  <div class="wrap hero-grid">
+    <div>
+      <span class="eyebrow">النسخة الأولى متاحة الآن</span>
+      <h1>شبكتك كلها،<br>من <span class="accent">شاشة واحدة</span>.</h1>
+      <p class="lead">ConnectOS بيوصلك بكل أجهزة الميكروتيك بتاعتك، مهما كان عددها أو أماكنها، وبيديك تحكم كامل في الكروت والمشتركين والموزعين — بلوحة تحكم عربية سريعة ومصممة فعلاً عشان تريّحك مش تعقّدك.</p>
+      <div class="hero-actions">
+        <a href="{% url 'core:signup' %}" class="btn btn-primary btn-lg">جرّب المنصة الآن</a>
+        <a href="#dashboard" class="btn btn-ghost btn-lg">شوف لوحة التحكم</a>
+      </div>
+      <div class="trust-row">
+        <div><strong>+4,000</strong> مشترك نشط</div>
+        <div class="trust-sep"></div>
+        <div><strong>99.4٪</strong> نسبة استقرار</div>
+        <div class="trust-sep"></div>
+        <div><strong>&lt; 2 ثانية</strong> زمن استجابة الكارت</div>
+      </div>
+    </div>
+
+    <div class="ticket-stage">
+      <div class="glow-blob"></div>
+      <div class="ticket">
+        <div class="ticket-brand">
+          <div class="tb-logo">ConnectOS</div>
+          <div class="ticket-price">10 جنيه</div>
+        </div>
+        <div class="ticket-mid">
+          <div class="ticket-stat"><div class="num">1700</div><div class="lbl">ميجا</div></div>
+          <div class="ticket-divider"></div>
+          <div class="ticket-stat"><div class="num">3</div><div class="lbl">أيام</div></div>
+        </div>
+        <div class="ticket-code">7869 262 937</div>
+        <div class="ticket-foot">كارت شحن مُولَّد أوتوماتيكيًا</div>
+      </div>
+      <div class="ticket-2">
+        <div class="t2-top"><span>1 يوم — 500 ميجا</span><span>5 ج</span></div>
+        <div class="t2-code">2633 389 299</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="stats">
+  <div class="wrap stats-grid">
+    <div class="stat"><div class="num">2,400+</div><div class="lbl">جهاز NAS مُدار</div></div>
+    <div class="stat"><div class="num">18</div><div class="lbl">محافظة مغطاة</div></div>
+    <div class="stat"><div class="num">96%</div><div class="lbl">تحصيل ديون الموزعين</div></div>
+    <div class="stat"><div class="num">24/7</div><div class="lbl">مراقبة وتنبيهات حيّة</div></div>
+  </div>
+</div>
+
+<section id="features">
+  <div class="wrap">
+    <div class="sec-head">
+      <span class="sec-eyebrow">المميزات</span>
+      <h2>كل حاجة محتاجها لإدارة الشبكة، مبنية من الأول عشان السوق المصري.</h2>
+      <p>مش بس بديل لـ RADIUS تقليدي — منظومة كاملة بتفهم إزاي بتشتغل فعليًا شبكات الكروت والموزعين.</p>
+    </div>
+    <div class="feat-grid">
+      <div class="feat-card">
+        <div class="feat-icon">🛰️</div>
+        <h3>إدارة أجهزة لا محدودة</h3>
+        <p>اربط كل أجهزة الميكروتيك في كل الأعمدة والمناطق بحساب واحد، وتابع حالة كل جهاز لحظة بلحظة.</p>
+      </div>
+      <div class="feat-card">
+        <div class="feat-icon">🗺️</div>
+        <h3>تقسيم جغرافي ذكي</h3>
+        <p>نظّم عملاءك حسب المنطقة، الشارع، أو العمارة، وشوف أداء كل منطقة على حدة من غير خلط.</p>
+      </div>
+      <div class="feat-card">
+        <div class="feat-icon">💳</div>
+        <h3>توليد وطباعة كروت</h3>
+        <p>ولّد آلاف الأكواد بضغطة واحدة، وصمّم شكل الكارت اللي هيتطبع بالضبط زي ما محلاتك محتاجاه.</p>
+      </div>
+      <div class="feat-card">
+        <div class="feat-icon">🧾</div>
+        <h3>إدارة ديون الموزعين</h3>
+        <p>اعرف بالظبط كل موزع عليه كام، من غير حساب يدوي — كل تسليم كارت وكل سداد بيتسجل ويتحسب لوحده.</p>
+      </div>
+      <div class="feat-card">
+        <div class="feat-icon">🔔</div>
+        <h3>تنبيهات فورية</h3>
+        <p>إشعار لحظي على واتساب أو تيليجرام لو جهاز وقع، أو موزع تخطى حد دينه، أو محاولات دخول مشبوهة.</p>
+      </div>
+      <div class="feat-card">
+        <div class="feat-icon">📊</div>
+        <h3>تقارير تفهمها من نظرة</h3>
+        <p>إيرادات، استهلاك، أكتر المناطق نشاطًا — كله في رسوم بيانية واضحة من غير إكسيل معقد.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="flow" id="flow">
+  <div class="wrap">
+    <div class="sec-head">
+      <span class="sec-eyebrow">آلية العمل</span>
+      <h2>من فتح الحساب لحد أول كارت شغال، في أقل من ساعة.</h2>
+    </div>
+    <div class="flow-steps">
+      <div class="flow-step">
+        <div class="flow-num">01</div>
+        <h4>اربط أجهزتك</h4>
+        <p>أضف بيانات كل جهاز ميكروتيك (الـ IP والمفتاح السري)، والنظام يتصل بيه فورًا ويبدأ يراقب حالته.</p>
+      </div>
+      <div class="flow-step">
+        <div class="flow-num">02</div>
+        <h4>جهّز الباقات والكروت</h4>
+        <p>حدد باقاتك (الكوطة، المدة، السعر)، وولّد أول دفعة كروت جاهزة للطباعة بتصميم اخترته إنت.</p>
+      </div>
+      <div class="flow-step">
+        <div class="flow-num">03</div>
+        <h4>وزّع وتابع</h4>
+        <p>سلّم الكروت للموزعين، وتابع كل حاجة — من أول جلسة دخول لحد آخر جنيه محصّل — من مكان واحد.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="dashboard">
+  <div class="wrap">
+    <div class="sec-head">
+      <span class="sec-eyebrow">لوحة التحكم</span>
+      <h2>واجهة مبنية من الصفر، مفيش فيها ولا شاشة زيادة عن اللزوم.</h2>
+      <p>كل شاشة مصممة عشان تجاوبك على سؤال واحد بسرعة: مين متصل دلوقتي؟ مين مديون؟ فين المشكلة؟</p>
+    </div>
+    <div class="preview-shell">
+      <div class="preview-topbar"><span></span><span></span><span></span></div>
+      <div class="preview-body">
+        <div class="p-side">
+          <div class="p-item active">📈 نظرة عامة</div>
+          <div class="p-item">🛰️ الأجهزة</div>
+          <div class="p-item">💳 الكروت</div>
+          <div class="p-item">👥 المشتركين</div>
+          <div class="p-item">🧾 الديون والموزعين</div>
+          <div class="p-item">⚙️ الإعدادات</div>
+        </div>
+        <div class="p-main">
+          <div class="p-cards">
+            <div class="p-card"><div class="pc-lbl">متصلين الآن</div><div class="pc-val up">1,284</div></div>
+            <div class="p-card"><div class="pc-lbl">إيراد اليوم</div><div class="pc-val">6,920 ج</div></div>
+            <div class="p-card"><div class="pc-lbl">ديون متأخرة</div><div class="pc-val warn">3 موزعين</div></div>
+          </div>
+          <div class="p-chart">
+            <div class="bar" style="height:40%"></div>
+            <div class="bar" style="height:65%"></div>
+            <div class="bar" style="height:50%"></div>
+            <div class="bar" style="height:82%"></div>
+            <div class="bar" style="height:60%"></div>
+            <div class="bar" style="height:95%"></div>
+            <div class="bar" style="height:70%"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <div class="sec-head">
+      <span class="sec-eyebrow">لصاحب المنصة</span>
+      <h2>إنت المالك — وكل رقم في شبكتك تحت إيدك.</h2>
+      <p>لوحة إدارية منفصلة بتديك أنت (صاحب النظام) رؤية كاملة على كل عملائك المشتركين في المنصة نفسها.</p>
+    </div>
+    <div class="owner-list">
+      <div class="owner-item">
+        <div class="oi-ico">👤</div>
+        <div><h4>قاعدة بيانات كاملة للعملاء</h4><p>أسماء أصحاب الشبكات المشتركين في ConnectOS، بياناتهم، وتاريخ انضمامهم.</p></div>
+      </div>
+      <div class="owner-item">
+        <div class="oi-ico">📅</div>
+        <div><h4>سجل الدخول والنشاط</h4><p>آخر تسجيل دخول لكل عميل، ومدى استخدامه الفعلي للمنصة على مدار الوقت.</p></div>
+      </div>
+      <div class="owner-item">
+        <div class="oi-ico">💰</div>
+        <div><h4>إجمالي المدفوعات</h4><p>كل مبلغ دفعه كل عميل لاشتراكه في المنصة، بالتاريخ وطريقة الدفع.</p></div>
+      </div>
+      <div class="owner-item">
+        <div class="oi-ico">📉</div>
+        <div><h4>مؤشرات نمو حية</h4><p>عدد العملاء الجدد، معدل الإلغاء، وأكتر الباقات اشتراكًا على مستوى المنصة كلها.</p></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="wrap designer">
+    <div>
+      <span class="sec-eyebrow">جديد</span>
+      <h2 style="font-size:clamp(24px,3vw,34px);font-weight:800;margin-bottom:16px;">صمّم شكل كارتك بنفسك.</h2>
+      <p style="color:var(--text-muted);font-size:16px;margin-bottom:26px;">اختار قالب جاهز أو ابدأ من الصفر — لوّن، غيّر اللوجو، رتّب البيانات — والكارت اللي هيتطبع لمحلاتك يبقى بنفس هوية شبكتك بالظبط.</p>
+      <ul class="price-feats">
+        <li>قوالب جاهزة بألوان وأحجام مختلفة</li>
+        <li>رفع شعارك ورقم الدعم الفني تلقائيًا على كل كارت</li>
+        <li>معاينة فورية قبل الطباعة، ثم تصدير PDF جاهز</li>
+      </ul>
+    </div>
+    <div class="designer-panel">
+      <div style="font-weight:700;margin-bottom:14px;">قوالب الكارت</div>
+      <div class="swatches">
+        <div class="swatch active" style="background:linear-gradient(135deg,#1BA89B,#0B2624);"></div>
+        <div class="swatch" style="background:linear-gradient(135deg,#E7A83D,#D88A2A);"></div>
+        <div class="swatch" style="background:linear-gradient(135deg,#F3EEDF,#c9c0a8);"></div>
+        <div class="swatch" style="background:linear-gradient(135deg,#3D5AE7,#232C7A);"></div>
+      </div>
+      <div class="tpl-list">
+        <div class="tpl-row sel"><span>القالب الكلاسيكي</span><span class="tag">مُفعّل</span></div>
+        <div class="tpl-row"><span>قالب مضغوط (كارت صغير)</span><span class="tag" style="background:rgba(255,255,255,0.06);color:var(--text-muted);">اختيار</span></div>
+        <div class="tpl-row"><span>قالب بشعار كبير</span><span class="tag" style="background:rgba(255,255,255,0.06);color:var(--text-muted);">اختيار</span></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="pricing">
+  <div class="wrap">
+    <div class="sec-head" style="margin-left:auto;margin-right:auto;text-align:center;">
+      <span class="sec-eyebrow">الأسعار</span>
+      <h2>خطة تكبر مع شبكتك، مش أكبر منها.</h2>
+    </div>
+    <div class="pricing-grid">
+      <div class="price-card">
+        <h3>البداية</h3>
+        <div class="sub">لأصحاب الشبكات الصغيرة والكافيهات</div>
+        <div class="price-val"><span class="amt mono">150</span><span class="per">ج / شهريًا</span></div>
+        <ul class="price-feats">
+          <li>حتى 300 مشترك</li>
+          <li>3 أجهزة NAS</li>
+          <li>كروت وباقات غير محدودة</li>
+          <li>دعم فني عبر الشات</li>
+        </ul>
+        <a href="{% url 'core:signup' %}?plan=starter" class="btn btn-ghost">ابدأ الآن</a>
+      </div>
+      <div class="price-card pop">
+        <div class="pop-badge">الأكثر طلبًا</div>
+        <h3>النمو</h3>
+        <div class="sub">للشبكات المنتشرة على أكتر من منطقة</div>
+        <div class="price-val"><span class="amt mono">450</span><span class="per">ج / شهريًا</span></div>
+        <ul class="price-feats">
+          <li>حتى 2,000 مشترك</li>
+          <li>25 جهاز NAS</li>
+          <li>نظام ديون وموزعين كامل</li>
+          <li>تنبيهات واتساب وتيليجرام</li>
+          <li>دعم فني بالأولوية</li>
+        </ul>
+        <a href="{% url 'core:signup' %}?plan=growth" class="btn btn-primary">ابدأ الآن</a>
+      </div>
+      <div class="price-card">
+        <h3>الاحتراف</h3>
+        <div class="sub">لمزودي الخدمة على مستوى المحافظة</div>
+        <div class="price-val"><span class="amt mono">950</span><span class="per">ج / شهريًا</span></div>
+        <ul class="price-feats">
+          <li>مشتركين غير محدودين</li>
+          <li>أجهزة NAS غير محدودة</li>
+          <li>تقارير وتحليلات متقدمة</li>
+          <li>مدير حساب مخصص</li>
+        </ul>
+        <a href="{% url 'core:signup' %}?plan=pro" class="btn btn-ghost">ابدأ الآن</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="cta-band">
+    <h2>جرّب ConnectOS على شبكتك الحقيقية.</h2>
+    <p>15 يوم تجربة كاملة، من غير بطاقة ائتمان.</p>
+    <a href="{% url 'core:signup' %}" class="btn btn-primary btn-lg">ابدأ تجربتك المجانية</a>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">
+    <div class="foot-grid">
+      <div class="foot-brand">
+        <div class="logo"><span class="dot"></span> ConnectOS</div>
+        <p>منصة إدارة اشتراكات إنترنت مصرية، مبنية عشان تفهم إزاي فعلاً بتشتغل شبكات الكروت والموزعين.</p>
+      </div>
+      <div class="foot-col">
+        <h5>المنتج</h5>
+        <a href="#features">المميزات</a>
+        <a href="#dashboard">لوحة التحكم</a>
+        <a href="#pricing">الأسعار</a>
+      </div>
+      <div class="foot-col">
+        <h5>الشركة</h5>
+        <a href="#">من نحن</a>
+        <a href="#">تواصل معنا</a>
+        <a href="#">الوظائف</a>
+      </div>
+      <div class="foot-col">
+        <h5>الدعم</h5>
+        <a href="#">مركز المساعدة</a>
+        <a href="#">حالة النظام</a>
+        <a href="#">سياسة الخصوصية</a>
+      </div>
+    </div>
+    <div class="foot-bottom">
+      <span>© 2026 ConnectOS. كل الحقوق محفوظة.</span>
+      <span>صُنع لشبكات الإنترنت المصرية 🇪🇬</span>
+    </div>
+  </div>
+</footer>
+
+</body>
+</html>
