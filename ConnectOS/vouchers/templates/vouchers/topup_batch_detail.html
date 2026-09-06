@@ -3,6 +3,7 @@
 {% block page_crumb %}{{ batch.amount }} ج لكل كارت — {{ batch.quantity }} كارت{% endblock %}
 {% block content %}
 <div class="panel">
+  <div class="table-responsive">
   <table>
     <thead><tr><th>الكود</th><th>القيمة</th><th>الحالة</th><th>استخدمه</th><th>تاريخ الاستخدام</th></tr></thead>
     <tbody>
@@ -20,5 +21,6 @@
       {% endfor %}
     </tbody>
   </table>
+  </div>
 </div>
 {% endblock %}
