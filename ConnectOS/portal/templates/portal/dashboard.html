@@ -1,0 +1,65 @@
+{% extends "portal/base_portal.html" %}
+{% block title %}حسابي — بوابة العميل{% endblock %}
+{% block content %}
+<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;">
+  <div>
+    <div style="font-weight:700;font-size:17px;">{{ sub.full_name }}</div>
+    <div style="color:var(--text-muted);font-size:12.5px;">{{ sub.username }}</div>
+  </div>
+  <a href="{% url 'portal:logout' %}" class="btn btn-ghost btn-sm">خروج</a>
+</div>
+
+<div style="background:rgba(0,102,255,0.12);border:1px solid rgba(0,102,255,0.35);border-radius:16px;padding:16px;margin-bottom:16px;backdrop-filter:blur(10px);">
+  <div style="display:flex;justify-content:space-between;margin-bottom:8px;">
+    <span style="color:var(--text-muted);font-size:13px;">الباقة</span>
+    <strong>{{ sub.plan.name }}</strong>
+  </div>
+  <div style="display:flex;justify-content:space-between;margin-bottom:8px;">
+    <span style="color:var(--text-muted);font-size:13px;">الحالة</span>
+    {% if sub.effective_status == "active" %}<span class="badge badge-green">نشط</span>
+    {% elif sub.effective_status == "expired" %}<span class="badge badge-gold">منتهي</span>
+    {% else %}<span class="badge badge-red">موقوف</span>{% endif %}
+  </div>
+  <div style="display:flex;justify-content:space-between;margin-bottom:8px;">
+    <span style="color:var(--text-muted);font-size:13px;">ينتهي في</span>
+    <span>{{ sub.expires_at|date:"Y-m-d H:i"|default:"—" }}</span>
+  </div>
+  <div style="display:flex;justify-content:space-between;">
+    <span style="color:var(--text-muted);font-size:13px;">إجمالي الاستهلاك</span>
+    <span>{{ total_mb }} MB</span>
+  </div>
+</div>
+
+<div style="background:rgba(245,158,11,0.12);border:1px solid rgba(245,158,11,0.35);border-radius:16px;padding:16px;margin-bottom:16px;backdrop-filter:blur(10px);">
+  <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;">
+    <span style="color:var(--text-muted);font-size:13px;">رصيدك الحالي</span>
+    <strong style="font-size:16px;">{{ sub.balance }} ج</strong>
+  </div>
+  <form method="post" action="{% url 'portal:redeem_topup' %}" style="display:flex;gap:8px;">
+    {% csrf_token %}
+    <input type="text" name="code" class="field" placeholder="اكتب كود كارت الشحن" dir="ltr" style="flex:1;">
+    <button type="submit" class="btn btn-sm btn-primary">شحن</button>
+  </form>
+</div>
+
+<form method="post" action="{% url 'portal:renew' %}">
+  {% csrf_token %}
+  <button type="submit" class="btn btn-primary btn-block">تجديد الاشتراك — {{ sub.plan.price }} ج</button>
+</form>
+
+<div style="margin-top:22px;">
+  <div style="font-weight:700;font-size:13.5px;margin-bottom:10px;color:var(--text-muted);">آخر الجلسات</div>
+  <div class="table-responsive">
+  <table>
+    <thead><tr><th>البداية</th><th>الاستهلاك</th></tr></thead>
+    <tbody>
+      {% for s in usage %}
+      <tr><td>{{ s.acctstarttime|date:"Y-m-d H:i" }}</td><td>{{ s.total_mb }} MB</td></tr>
+      {% empty %}
+      <tr><td colspan="2" style="color:var(--text-muted);text-align:center;padding:16px;">لا يوجد استخدام مسجل بعد</td></tr>
+      {% endfor %}
+    </tbody>
+  </table>
+  </div>
+</div>
+{% endblock %}

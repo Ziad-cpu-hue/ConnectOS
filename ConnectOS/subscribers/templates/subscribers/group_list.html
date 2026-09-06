@@ -1,0 +1,38 @@
+{% extends "base.html" %}
+{% block title %}مجموعات المشتركين — ConnectOS{% endblock %}
+{% block page_title %}مجموعات المشتركين{% endblock %}
+{% block page_crumb %}قسّم مشتركينك حسب الشارع أو المدينة أو العمارة لتسهيل المتابعة{% endblock %}
+{% block page_action %}<a href="{% url 'subscribers:list' %}" class="btn btn-ghost">رجوع للمشتركين</a>{% endblock %}
+
+{% block content %}
+<div class="panel" style="max-width:480px;">
+  <form method="post" style="display:flex;gap:10px;">
+    {% csrf_token %}
+    {{ form.name }}
+    <button type="submit" class="btn btn-primary btn-sm">إضافة</button>
+  </form>
+</div>
+
+<div class="panel">
+  <div class="table-responsive">
+  <table>
+    <thead><tr><th>اسم المجموعة</th><th>عدد المشتركين</th><th></th></tr></thead>
+    <tbody>
+      {% for g in groups %}
+      <tr>
+        <td>{{ g.name }}</td>
+        <td>{{ g.subscribers.count }}</td>
+        <td>
+          <form method="post" action="{% url 'subscribers:group_delete' g.pk %}" onsubmit="return confirm('تأكيد حذف المجموعة؟ المشتركون فيها هيفضلوا موجودين بدون مجموعة.');">
+            {% csrf_token %}<button type="submit" class="btn btn-danger btn-sm">حذف</button>
+          </form>
+        </td>
+      </tr>
+      {% empty %}
+      <tr><td colspan="3"><div class="empty">لسه مفيش مجموعات.</div></td></tr>
+      {% endfor %}
+    </tbody>
+  </table>
+  </div>
+</div>
+{% endblock %}
